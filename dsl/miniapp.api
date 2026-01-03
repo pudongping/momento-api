@@ -1,0 +1,14 @@
+syntax = "v1"
+
+info (
+	title:   "「时光小账本」小程序接口"
+	desc:    "小程序接口模块"
+	author:  "Alex"
+	email:   ""
+	version: "v1"
+)
+
+import (
+	"user/login.api"
+)
+

@@ -1,0 +1,25 @@
+type (
+    LoginReq {
+        Code string `json:"code,optional"`
+    }
+    LoginResp {
+        UID string `json:"uid"`
+        Nickname string `json:"nickname"`
+        Avatar string `json:"avatar"`
+        Phone string `json:"phone"`
+        Token string `json:"token"`
+        CreatedAt int64 `json:"created_at"`
+        UpdatedAt int64 `json:"updated_at"`
+    }
+)
+
+@server(
+    group: user
+    tags: "用户相关"
+)
+service miniapp-api {
+    @doc "小程序授权登录"
+    @handler user
+    post /user/login (LoginReq) returns (LoginResp)
+}
+
