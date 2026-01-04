@@ -8,6 +8,7 @@
 - [小程序新的方式获取头像和昵称](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/userProfile.html)
 
 - [prf16/go-zero-box](https://github.com/prf16/go-zero-box/blob/main/app/doc/doc/doc.api)
+- [go-zero-looklook](https://github.com/Mikaelemmmm/go-zero-looklook/blob/main/pkg/uniqueid/uniqueid.go)
 
 ## 1、配置环境
 

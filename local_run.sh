@@ -18,25 +18,39 @@ function _ensure_goctl_exec() {
   fi
 }
 
-function goctl() {
+function goctl_exec() {
   shift  # remove the "goctl" command name
   _ensure_goctl_exec
   exec "$GoCTL_CMD" "$@"
 }
 
-function gengo() {
-    GoCTL_CMD api go -api ./dsl/*.api -dir . --style=goZero
+# 生成 go api 代码
+function go_zero_gen_api() {
+    GoCTL_CMD api go -api ./dsl/*.api -dir . --style=goZero --home ./goctlTemplates/1.9.2
+}
+
+# 生成 md 文档
+function go_zero_gen_doc_md() {
+    GoCTL_CMD api doc --dir ./
+}
+
+# 模版初始化
+function go_zero_tpl_init() {
+    GoCTL_CMD template init
 }
 
 # Dispatch based on first argument
 cmd=${1:-}
 
 case "$cmd" in
-  gengo)
-    gengo "$@"
+  genapi)
+    go_zero_gen_api
+    ;;
+  mddoc)
+    go_zero_gen_doc_md
     ;;
   goctl)
-    goctl "$@"
+    goctl_exec "$@"
     ;;
   "")
     echo "Usage: ./local_run.sh {gengo|goctl ...|<forward to goctl>}" >&2

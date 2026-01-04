@@ -1,3 +1,64 @@
-Name: miniapp-api
+Name: momentoApi
+# 服务环境，dev-开发环境，test-测试环境，pre-预发环境，pro-正式环境，默认 pro
+Mode: dev
+# http 监听 ip，默认 0.0.0.0
 Host: 0.0.0.0
+# http 监听端口,必填
 Port: 9504
+# 是否打印详细 http 请求日志
+Verbose: true
+# http 同时可接受最大请求数（限流数），默认 10000
+MaxConns: 10000
+# http 可接受请求的最大 ContentLength，默认 1048576，被设置的值必须在 0 到 8388608 之间
+MaxBytes: 1048576
+# 超时时长控制，单位：毫秒，默认 3000
+Timeout: 3000
+# cpu 降载阈值，默认 900，可允许设置范围 0 到 1000
+CpuThreshold: 900
+
+AppService:
+  StaticFSRelativePath: http://0.0.0.0:9504/static
+
+Mysql:
+  DataSource: root:123456@tcp(127.0.0.1:3306)/software-shop?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+# redis 配置信息
+Redis:
+  Host: 127.0.0.1:6379
+  Type: node
+  Pass:
+
+CacheRedis:
+  - Host: 127.0.0.1:6379
+    # redis 密码
+    Pass:
+    # redis 类型，node、cluster
+    Type: node
+    # 权重
+    Weight: 100
+
+JWTAuth:
+  AccessSecret: BpOkRaa2pncDI1dFZqaGtMRzhHWGswbkYzdHBOU2
+  # jwt token 有效期，单位：秒（1296000s=15days）
+  AccessExpire: 1296000
+
+Log:
+  # 服务名称，默认会采用 Name
+  #  ServiceName:
+  # 日志模式，console-输出到 console，file-输出到当前服务器（容器）文件，volume-输出docker挂在文件内
+  Mode: console
+  # plain or json
+  Encoding: plain
+  TimeFormat: 2006-01-02 15:04:05
+  # 日志存储路径
+  Path: runtime/logs
+  # 日志级别
+  Level: debug
+  # 是否开启 gzip 压缩
+  Compress: true
+  # 日志保留天数
+  KeepDays: 15
+  MaxBackups: 7
+  # 300MB
+  MaxSize: 1
+  Rotation: daily
