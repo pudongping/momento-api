@@ -65,21 +65,3 @@ api 文件格式化美观
 # 好像只能一个文件一个文件的格式化
 docker run --rm -it -v `pwd`:/app kevinwan/goctl:1.9.2 api format --dir ./dsl/miniapp.api
 ```
-
-
-```mysql
-CREATE TABLE `users` (
-  `user_id` bigint(20) NOT NULL COMMENT '用户唯一ID（雪花算法）',
-  `openid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '微信openid',
-  `unionid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '微信unionid',
-  `nickname` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户昵称',
-  `avatar` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户头像URL',
-  `phone` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '手机号',
-  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间（秒级时间戳）',
-  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间（秒级时间戳）',
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `uk_openid` (`openid`),
-  KEY `idx_phone` (`phone`),
-  KEY `idx_created_at` (`created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户表';
-```
