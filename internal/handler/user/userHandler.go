@@ -6,6 +6,8 @@ package user
 import (
 	"net/http"
 
+	"github.com/pudongping/momento-api/coreKit/responses"
+
 	"github.com/pudongping/momento-api/internal/logic/user"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/internal/types"
@@ -17,16 +19,12 @@ func UserHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.LoginReq
 		if err := httpx.Parse(r, &req); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			responses.ToParamValidateResponse(r, w, err)
 			return
 		}
 
 		l := user.NewUserLogic(r.Context(), svcCtx)
 		resp, err := l.User(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+		responses.ToResponse(r, w, resp, err)
 	}
 }
