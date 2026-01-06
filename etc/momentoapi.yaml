@@ -62,3 +62,8 @@ Log:
   # 300MB
   MaxSize: 1
   Rotation: daily
+
+WXMiniProgram:
+  # 微信小程序 AppID 和 AppSecret
+  AppID: your-wx-mini-program-appid
+  AppSecret: your-wx-mini-program-appsecret

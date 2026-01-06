@@ -4,7 +4,7 @@
 package types
 
 type LoginReq struct {
-	Code string `json:"code,optional"`
+	Code string `json:"code,optional" valid:"code"`
 }
 
 type LoginResp struct {

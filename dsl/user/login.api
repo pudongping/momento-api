@@ -1,6 +1,6 @@
 type (
     LoginReq {
-        Code string `json:"code,optional"`
+        Code string `json:"code,optional" valid:"code"`
     }
     LoginResp {
         UserID string `json:"user_id"`
