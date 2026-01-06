@@ -1,31 +1,24 @@
-FROM golang:1.25.5-alpine AS builder
+FROM golang:1.25.5-alpine
 
-LABEL stage=gobuilder
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64 \
+    GOPROXY=https://goproxy.cn,https://goproxy.io,direct
 
-ENV CGO_ENABLED 0
-ENV GOPROXY https://goproxy.cn,direct
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && set -ex \
+    && apk update --no-cache \
+    && apk add --no-cache tzdata \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone \
+    && echo -e "\033[42;37m Build Completed :).\033[0m\n"
 
-RUN apk update --no-cache && apk add --no-cache tzdata
+WORKDIR /go-project
 
-WORKDIR /build
+COPY . /go-project
 
-ADD go.mod .
-ADD go.sum .
-RUN go mod download
-COPY . .
+RUN go mod tidy \
+    && go build -a -installsuffix cgo -o momentoApiBinary momentoapi.go
 
-RUN go build -ldflags="-s -w" -o /app/momentoApi momentoapi.go
-
-
-FROM scratch
-
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/Shanghai
-ENV TZ Asia/Shanghai
-
-WORKDIR /app
-COPY --from=builder /app/momentoApi /app/momentoApi
-COPY ./etc /app/etc
-
-CMD ["./momentoApi", "-f", "etc/momentoapi.yaml"]
+CMD ["./momentoApiBinary", "-f", "etc/momentoapi.yaml"]

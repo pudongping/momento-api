@@ -12,15 +12,25 @@ import (
 type Config struct {
 	rest.RestConf
 
+	AppService struct {
+		StaticFSRelativePath string
+	}
+
 	Mysql struct {
 		DataSource string
 	}
 
-	CacheRedis cache.CacheConf
-
 	Redis redis.RedisConf
 
-	AppService struct {
-		StaticFSRelativePath string
+	CacheRedis cache.CacheConf
+
+	JWTAuth struct {
+		AccessSecret string
+		AccessExpire int64
+	}
+
+	WXMiniProgram struct {
+		AppID     string `json:"AppID"`     // 微信小程序的 app_id
+		AppSecret string `json:"AppSecret"` // 微信小程序的 app_secret
 	}
 }

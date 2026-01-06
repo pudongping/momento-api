@@ -20,7 +20,7 @@ AppService:
   StaticFSRelativePath: http://0.0.0.0:9504/static
 
 Mysql:
-  DataSource: root:123456@tcp(127.0.0.1:3306)/software-shop?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DataSource: root:123456@tcp(127.0.0.1:3306)/momento?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 
 # redis 配置信息
 Redis:
