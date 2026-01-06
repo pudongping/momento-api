@@ -8,10 +8,13 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	UID       string `json:"uid"`
+	UserID    string `json:"user_id"`
+	OpenID    string `json:"openid"`
+	UnionID   string `json:"unionid"`
 	Nickname  string `json:"nickname"`
 	Avatar    string `json:"avatar"`
 	Phone     string `json:"phone"`
+	IsDisable int32  `json:"is_disable"`
 	Token     string `json:"token"`
 	CreatedAt int64  `json:"created_at"`
 	UpdatedAt int64  `json:"updated_at"`

@@ -25,10 +25,10 @@ var (
 type (
 	usersModel interface {
 		Insert(ctx context.Context, data *Users) (sql.Result, error)
-		FindOne(ctx context.Context, userId int64) (*Users, error)
+		FindOne(ctx context.Context, userId uint64) (*Users, error)
 		FindOneByOpenid(ctx context.Context, openid string) (*Users, error)
 		Update(ctx context.Context, data *Users) error
-		Delete(ctx context.Context, userId int64) error
+		Delete(ctx context.Context, userId uint64) error
 	}
 
 	defaultUsersModel struct {
@@ -37,14 +37,18 @@ type (
 	}
 
 	Users struct {
-		UserId    int64  `db:"user_id"`    // 用户唯一ID（雪花算法）
-		Openid    string `db:"openid"`     // 微信openid
-		Unionid   string `db:"unionid"`    // 微信unionid
-		Nickname  string `db:"nickname"`   // 用户昵称
-		Avatar    string `db:"avatar"`     // 用户头像URL
-		Phone     string `db:"phone"`      // 手机号
-		CreatedAt uint64 `db:"created_at"` // 创建时间（秒级时间戳）
-		UpdatedAt uint64 `db:"updated_at"` // 更新时间（秒级时间戳）
+		UserId        uint64 `db:"user_id"`         // 用户唯一ID（雪花算法）
+		Openid        string `db:"openid"`          // 微信openid
+		Unionid       string `db:"unionid"`         // 微信unionid
+		Nickname      string `db:"nickname"`        // 用户昵称
+		Avatar        string `db:"avatar"`          // 用户头像URL
+		Phone         string `db:"phone"`           // 手机号
+		IsDisable     int64  `db:"is_disable"`      // 是否禁用 1-启用 2-禁用
+		RegisterIp    string `db:"register_ip"`     // 注册时的ip
+		LoginIp       string `db:"login_ip"`        // 登录时的ip
+		LastLoginTime uint64 `db:"last_login_time"` // 最近登录的时间（秒级时间戳）
+		CreatedAt     uint64 `db:"created_at"`      // 创建时间（秒级时间戳）
+		UpdatedAt     uint64 `db:"updated_at"`      // 更新时间（秒级时间戳）
 	}
 )
 
@@ -55,13 +59,13 @@ func newUsersModel(conn sqlx.SqlConn) *defaultUsersModel {
 	}
 }
 
-func (m *defaultUsersModel) Delete(ctx context.Context, userId int64) error {
+func (m *defaultUsersModel) Delete(ctx context.Context, userId uint64) error {
 	query := fmt.Sprintf("delete from %s where `user_id` = ?", m.table)
 	_, err := m.conn.ExecCtx(ctx, query, userId)
 	return err
 }
 
-func (m *defaultUsersModel) FindOne(ctx context.Context, userId int64) (*Users, error) {
+func (m *defaultUsersModel) FindOne(ctx context.Context, userId uint64) (*Users, error) {
 	query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", usersRows, m.table)
 	var resp Users
 	err := m.conn.QueryRowCtx(ctx, &resp, query, userId)
@@ -90,14 +94,14 @@ func (m *defaultUsersModel) FindOneByOpenid(ctx context.Context, openid string) 
 }
 
 func (m *defaultUsersModel) Insert(ctx context.Context, data *Users) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, usersRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.Openid, data.Unionid, data.Nickname, data.Avatar, data.Phone, data.CreatedAt, data.UpdatedAt)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, usersRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.Openid, data.Unionid, data.Nickname, data.Avatar, data.Phone, data.IsDisable, data.RegisterIp, data.LoginIp, data.LastLoginTime, data.CreatedAt, data.UpdatedAt)
 	return ret, err
 }
 
 func (m *defaultUsersModel) Update(ctx context.Context, newData *Users) error {
 	query := fmt.Sprintf("update %s set %s where `user_id` = ?", m.table, usersRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.Openid, newData.Unionid, newData.Nickname, newData.Avatar, newData.Phone, newData.CreatedAt, newData.UpdatedAt, newData.UserId)
+	_, err := m.conn.ExecCtx(ctx, query, newData.Openid, newData.Unionid, newData.Nickname, newData.Avatar, newData.Phone, newData.IsDisable, newData.RegisterIp, newData.LoginIp, newData.LastLoginTime, newData.CreatedAt, newData.UpdatedAt, newData.UserId)
 	return err
 }
 

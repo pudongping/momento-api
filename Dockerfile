@@ -15,7 +15,7 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 
-RUN go build -ldflags="-s -w" -o /app/momentoApi main.go
+RUN go build -ldflags="-s -w" -o /app/momentoApi momentoapi.go
 
 
 FROM scratch
@@ -28,4 +28,4 @@ WORKDIR /app
 COPY --from=builder /app/momentoApi /app/momentoApi
 COPY ./etc /app/etc
 
-CMD ["./momentoApi", "-f", "etc/momento-api.yaml"]
+CMD ["./momentoApi", "-f", "etc/momentoapi.yaml"]

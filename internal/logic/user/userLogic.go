@@ -28,7 +28,8 @@ func NewUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLogic {
 }
 
 func (l *UserLogic) User(req *types.LoginReq) (resp *types.LoginResp, err error) {
-	// todo: add your logic here and delete this line
-	resp.Nickname = "alex"
+	r := new(types.LoginResp)
+	r.Nickname = "测试用户"
+	resp = r
 	return
 }
