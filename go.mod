@@ -4,9 +4,12 @@ go 1.25.5
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
+	github.com/golang-jwt/jwt/v4 v4.5.2
+	github.com/jinzhu/copier v0.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/silenceper/wechat/v2 v2.1.11
 	github.com/sony/sonyflake v1.3.0
+	github.com/spf13/cast v1.4.1
 	github.com/thedevsaddam/govalidator v1.9.10
 	github.com/zeromicro/go-zero v1.9.4
 	google.golang.org/grpc v1.65.0
@@ -25,7 +28,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.9.0 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grafana/pyroscope-go v1.2.7 // indirect
 	github.com/grafana/pyroscope-go/godeltaprof v0.1.9 // indirect
@@ -45,7 +47,6 @@ require (
 	github.com/redis/go-redis/v9 v9.17.2 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/spf13/cast v1.4.1 // indirect
 	github.com/tidwall/gjson v1.14.1 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect

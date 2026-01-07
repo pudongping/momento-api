@@ -32,6 +32,11 @@ type (
 		{{.lowerStartCamelObject}}Model
 		{{if not .withCache}}withSession(session sqlx.Session) {{.upperStartCamelObject}}Model{{end}}
 
+		GetTableName() string
+		ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+		DeleteFilter(ctx context.Context, where squirrel.Sqlizer) (sql.Result, error)
+		UpdateFilter(ctx context.Context, updateData map[string]interface{}, where squirrel.Sqlizer) (sql.Result, error)
+
 		Transaction(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error
 		SelectBuilder(fields ...string) squirrel.SelectBuilder
 		CountBuilder(field ...string) squirrel.SelectBuilder
@@ -42,6 +47,7 @@ type (
 		FindOneByQuery(ctx context.Context, rowBuilder squirrel.SelectBuilder) (*{{.upperStartCamelObject}}, error)
 		FindAll(ctx context.Context, rowBuilder squirrel.SelectBuilder) ([]*{{.upperStartCamelObject}}, error)
 		FindListByPage(ctx context.Context, rowBuilder squirrel.SelectBuilder, page, perPage int64, orderBy string) ([]*{{.upperStartCamelObject}}, *paginator.Pagination, error)
+
 	}
 
 	custom{{.upperStartCamelObject}}Model struct {
@@ -64,6 +70,36 @@ func (m *custom{{.upperStartCamelObject}}Model) withSession(session sqlx.Session
 
 
 // 自定义模版中扩展的方法 start ----->
+
+func (m *default{{.upperStartCamelObject}}Model) GetTableName() string {
+    return m.table
+}
+
+func (m *default{{.upperStartCamelObject}}Model) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+    {{if .withCache}}return m.ExecNoCacheCtx(ctx, query, args...){{else}}
+    return m.conn.ExecCtx(ctx, query, args...)
+    {{end}}
+}
+
+func (m *default{{.upperStartCamelObject}}Model) DeleteFilter(ctx context.Context, where squirrel.Sqlizer) (sql.Result, error) {
+    deleteBuilder := squirrel.Delete(m.table).Where(where)
+    query, values, err := deleteBuilder.ToSql()
+    if err != nil {
+        return nil, err
+    }
+
+    return m.ExecContext(ctx, query, values...)
+}
+
+func (m *default{{.upperStartCamelObject}}Model) UpdateFilter(ctx context.Context, updateData map[string]interface{}, where squirrel.Sqlizer) (sql.Result, error) {
+    updateBuilder := squirrel.Update(m.table).SetMap(updateData).Where(where)
+    query, values, err := updateBuilder.ToSql()
+    if err != nil {
+        return nil, err
+    }
+
+    return m.ExecContext(ctx, query, values...)
+}
 
 func (m *default{{.upperStartCamelObject}}Model) Transaction(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error {
 	{{if .withCache}}

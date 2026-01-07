@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"database/sql"
 	"strings"
 
 	"github.com/pudongping/momento-api/coreKit/paginator"
@@ -18,6 +19,11 @@ type (
 	UsersModel interface {
 		usersModel
 		withSession(session sqlx.Session) UsersModel
+
+		GetTableName() string
+		ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+		DeleteFilter(ctx context.Context, where squirrel.Sqlizer) (sql.Result, error)
+		UpdateFilter(ctx context.Context, updateData map[string]interface{}, where squirrel.Sqlizer) (sql.Result, error)
 
 		Transaction(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error
 		SelectBuilder(fields ...string) squirrel.SelectBuilder
@@ -48,6 +54,36 @@ func (m *customUsersModel) withSession(session sqlx.Session) UsersModel {
 }
 
 // 自定义模版中扩展的方法 start ----->
+
+func (m *defaultUsersModel) GetTableName() string {
+	return m.table
+}
+
+func (m *defaultUsersModel) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+
+	return m.conn.ExecCtx(ctx, query, args...)
+
+}
+
+func (m *defaultUsersModel) DeleteFilter(ctx context.Context, where squirrel.Sqlizer) (sql.Result, error) {
+	deleteBuilder := squirrel.Delete(m.table).Where(where)
+	query, values, err := deleteBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	return m.ExecContext(ctx, query, values...)
+}
+
+func (m *defaultUsersModel) UpdateFilter(ctx context.Context, updateData map[string]interface{}, where squirrel.Sqlizer) (sql.Result, error) {
+	updateBuilder := squirrel.Update(m.table).SetMap(updateData).Where(where)
+	query, values, err := updateBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	return m.ExecContext(ctx, query, values...)
+}
 
 func (m *defaultUsersModel) Transaction(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error {
 

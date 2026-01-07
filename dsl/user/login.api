@@ -10,7 +10,7 @@ type (
         Avatar string `json:"avatar"`
         Phone string `json:"phone"`
         IsDisable int32 `json:"is_disable"`
-        Token string `json:"token"`
+        Token string `json:"token"` // JWT token
         CreatedAt int64 `json:"created_at"`
         UpdatedAt int64 `json:"updated_at"`
     }

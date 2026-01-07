@@ -18,7 +18,7 @@ import (
 )
 service momentoapi {
 	@doc "小程序授权登录"
-	@handler user
+	@handler userLogin
 	post /user/login (LoginReq) returns (LoginResp)
 }
 

@@ -19,7 +19,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				// 小程序授权登录
 				Method:  http.MethodPost,
 				Path:    "/user/login",
-				Handler: user.UserHandler(serverCtx),
+				Handler: user.UserLoginHandler(serverCtx),
 			},
 		},
 	)
