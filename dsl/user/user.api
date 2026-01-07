@@ -1,0 +1,35 @@
+type (
+    UserInfoReq {
+
+    }
+    UserInfoResp {
+        UserId string `json:"user_id"`
+        OpenId string `json:"openid"`
+        UnionId string `json:"unionid"`
+        Nickname string `json:"nickname"`
+        Avatar string `json:"avatar"`
+        Phone string `json:"phone"`
+        IsDisable int `json:"is_disable"`
+        CreatedAt int64 `json:"created_at"`
+        UpdatedAt int64 `json:"updated_at"`
+    }
+)
+
+type (
+    UserUpdateReq {
+        Nickname string `json:"nickname"`
+        Avatar string `json:"avatar"`
+        Phone string `json:"phone"`
+    }
+    UserUpdateResp {
+        UserId string `json:"user_id"`
+        OpenId string `json:"openid"`
+        UnionId string `json:"unionid"`
+        Nickname string `json:"nickname"`
+        Avatar string `json:"avatar"`
+        Phone string `json:"phone"`
+        IsDisable int `json:"is_disable"`
+        CreatedAt int64 `json:"created_at"`
+        UpdatedAt int64 `json:"updated_at"`
+    }
+)

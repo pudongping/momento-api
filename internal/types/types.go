@@ -15,7 +15,40 @@ type LoginResp struct {
 	Avatar    string `json:"avatar"`
 	Phone     string `json:"phone"`
 	IsDisable int32  `json:"is_disable"`
-	Token     string `json:"token"`
+	Token     string `json:"token"` // JWT token
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
+}
+
+type UserInfoReq struct {
+}
+
+type UserInfoResp struct {
+	UserId    string `json:"user_id"`
+	OpenId    string `json:"openid"`
+	UnionId   string `json:"unionid"`
+	Nickname  string `json:"nickname"`
+	Avatar    string `json:"avatar"`
+	Phone     string `json:"phone"`
+	IsDisable int    `json:"is_disable"`
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
+}
+
+type UserUpdateReq struct {
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+	Phone    string `json:"phone"`
+}
+
+type UserUpdateResp struct {
+	UserId    string `json:"user_id"`
+	OpenId    string `json:"openid"`
+	UnionId   string `json:"unionid"`
+	Nickname  string `json:"nickname"`
+	Avatar    string `json:"avatar"`
+	Phone     string `json:"phone"`
+	IsDisable int    `json:"is_disable"`
 	CreatedAt int64  `json:"created_at"`
 	UpdatedAt int64  `json:"updated_at"`
 }

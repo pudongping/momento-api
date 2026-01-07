@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 func UnauthorizedHandler(w http.ResponseWriter, r *http.Request, err error) {
@@ -12,8 +14,9 @@ func UnauthorizedHandler(w http.ResponseWriter, r *http.Request, err error) {
 
 	resp := map[string]interface{}{
 		"code": http.StatusUnauthorized,
-		"msg":  fmt.Sprintf("授权认证失败：%v", err),
+		"msg":  "授权认证失败",
 	}
+	logx.Debugf("UnauthorizedHandler 授权认证失败[%+v]", err)
 	bs, _ := json.Marshal(resp)
 	if _, err := w.Write(bs); err != nil {
 		panic(fmt.Sprintf("UnauthorizedHandler 写响应失败: %v", err))

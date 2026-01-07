@@ -23,4 +23,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取用户信息
+				Method:  http.MethodGet,
+				Path:    "/user/info",
+				Handler: user.UserInfoHandler(serverCtx),
+			},
+			{
+				// 更新用户信息
+				Method:  http.MethodPut,
+				Path:    "/user/update",
+				Handler: user.UserUpdateHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.JWTAuth.AccessSecret),
+	)
 }

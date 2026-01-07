@@ -10,6 +10,7 @@ info (
 
 import (
 	"user/login.api"
+	"user/user.api"
 )
 
 @server (
@@ -20,5 +21,20 @@ service momentoapi {
 	@doc "小程序授权登录"
 	@handler userLogin
 	post /user/login (LoginReq) returns (LoginResp)
+}
+
+@server (
+	group: user
+	tags:  "用户相关-需要登录"
+	jwt:   JWTAuth
+)
+service momentoapi {
+	@doc "获取用户信息"
+	@handler userInfo
+	get /user/info (UserInfoReq) returns (UserInfoResp)
+
+	@doc "更新用户信息"
+	@handler userUpdate
+	put /user/update (UserUpdateReq) returns (UserUpdateResp)
 }
 

@@ -10,6 +10,7 @@ import (
 	"github.com/pudongping/momento-api/constant"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/model"
+	"github.com/spf13/cast"
 )
 
 type AuthCheckMiddleware struct {
@@ -59,8 +60,7 @@ func (m *AuthCheckMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 		// 检查数据库中该用户是否存在
 		queryBuilder := m.svc.UserModel.SelectBuilder().
-			Where("user_id = ?", userID).
-			Where("is_disable = ?", model.UserIsDisableNo)
+			Where("user_id = ?", cast.ToUint64(userID))
 		user, err := m.svc.UserModel.FindOneByQuery(r.Context(), queryBuilder)
 		if err != nil {
 			if errors.Is(err, model.ErrNotFound) {
@@ -69,7 +69,7 @@ func (m *AuthCheckMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			}
 			panic(errors.Wrap(err, "AuthCheckMiddleware.Handle 查询用户失败"))
 		}
-		if model.UserIsDisableYes != user.IsDisable {
+		if model.UserIsDisableYes == user.IsDisable {
 			unauthorized(w, r, "用户已被禁用")
 			return
 		}
