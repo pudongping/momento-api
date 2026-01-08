@@ -13,6 +13,8 @@ func LoginRequestCheck(data interface{}) map[string][]string {
 	messages := govalidator.MapData{
 		"code": []string{
 			"required:code为必填项",
+			"min_cn:code长度必须大于等于2个字符",
+			"max_cn:code长度不能超过150个字符",
 		},
 	}
 
