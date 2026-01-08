@@ -35,6 +35,18 @@ type UserInfoResp struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+type UserSettingsReq struct {
+}
+
+type UserSettingsResp struct {
+	UserSettingID int64   `json:"user_setting_id"`
+	UserId        string  `json:"user_id"`
+	BackgroundUrl string  `json:"background_url"`
+	Budget        float64 `json:"budget"`
+	CreatedAt     int64   `json:"created_at"`
+	UpdatedAt     int64   `json:"updated_at"`
+}
+
 type UserUpdateReq struct {
 	Nickname string `json:"nickname,optional" valid:"code"`
 	Avatar   string `json:"avatar,optional" valid:"avatar"`

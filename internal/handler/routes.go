@@ -35,6 +35,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user.UserInfoHandler(serverCtx),
 				},
 				{
+					// 获取用户设置
+					Method:  http.MethodGet,
+					Path:    "/user/settings",
+					Handler: user.UserSettingsHandler(serverCtx),
+				},
+				{
 					// 更新用户信息
 					Method:  http.MethodPut,
 					Path:    "/user/update",

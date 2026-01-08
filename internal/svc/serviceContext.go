@@ -19,7 +19,8 @@ type ServiceContext struct {
 
 	AuthCheckMiddleware rest.Middleware
 
-	UserModel model.UsersModel
+	UserModel        model.UsersModel
+	UserSettingModel model.UserSettingsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -36,6 +37,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	})
 
 	userModel := model.NewUsersModel(mysqlConn)
+	userSettingModel := model.NewUserSettingsModel(mysqlConn)
 
 	return &ServiceContext{
 		Config:      c,
@@ -44,6 +46,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		AuthCheckMiddleware: middleware.NewAuthCheckMiddleware(userModel, redisClient).Handle,
 
-		UserModel: userModel,
+		UserModel:        userModel,
+		UserSettingModel: userSettingModel,
 	}
 }
