@@ -20,6 +20,14 @@ type LoginResp struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+type UpdateUserSettingsReq struct {
+	BackgroundUrl string  `json:"background_url,optional"`
+	Budget        float64 `json:"budget,optional"`
+}
+
+type UpdateUserSettingsResp struct {
+}
+
 type UserInfoReq struct {
 }
 

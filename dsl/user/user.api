@@ -29,6 +29,15 @@ type (
 )
 
 type (
+    UpdateUserSettingsReq {
+        BackgroundUrl string `json:"background_url,optional"`
+        Budget float64 `json:"budget,optional"`
+    }
+    UpdateUserSettingsResp {
+    }
+)
+
+type (
     UserUpdateReq {
         Nickname string `json:"nickname,optional" valid:"code"`
         Avatar string `json:"avatar,optional" valid:"avatar"`

@@ -41,5 +41,9 @@ service momentoapi {
 	@doc "获取用户设置"
 	@handler userSettings
 	get /user/settings (UserSettingsReq) returns (UserSettingsResp)
+
+	@doc "更新用户设置"
+	@handler updateUserSettings
+	put /user/settings (UpdateUserSettingsReq) returns (UpdateUserSettingsResp)
 }
 
