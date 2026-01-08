@@ -55,6 +55,7 @@ func (l *UserInfoLogic) UserInfo(req *types.UserInfoReq) (*types.UserInfoResp, e
 	if err = copier.Copy(&resp, user); err != nil {
 		return nil, errors.Wrap(err, "UserInfo copier")
 	}
+	resp.UserId = cast.ToString(user.UserId)
 
 	return &resp, nil
 }
