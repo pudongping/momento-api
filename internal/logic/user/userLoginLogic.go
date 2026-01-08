@@ -113,7 +113,7 @@ func (l *UserLoginLogic) CreateUser(openID, clientIP string) (*model.Users, erro
 	if err != nil {
 		return nil, errcode.Fail.WithError(errors.Wrapf(err, "生成新用户昵称失败 userID : %d", userID))
 	}
-	newUserNickname = "新用户_" + newUserNickname
+	newUserNickname = "user_" + newUserNickname
 
 	user := new(model.Users)
 	user.UserId = cast.ToUint64(userID)

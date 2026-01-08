@@ -4,7 +4,7 @@
 package types
 
 type LoginReq struct {
-	Code string `json:"code,optional" valid:"code"`
+	Code string `json:"code" valid:"code"`
 }
 
 type LoginResp struct {
@@ -36,9 +36,9 @@ type UserInfoResp struct {
 }
 
 type UserUpdateReq struct {
-	Nickname string `json:"nickname"`
-	Avatar   string `json:"avatar"`
-	Phone    string `json:"phone"`
+	Nickname string `json:"nickname,optional" valid:"code"`
+	Avatar   string `json:"avatar,optional" valid:"avatar"`
+	Phone    string `json:"phone,optional" valid:"phone"`
 }
 
 type UserUpdateResp struct {

@@ -17,9 +17,9 @@ type (
 
 type (
     UserUpdateReq {
-        Nickname string `json:"nickname"`
-        Avatar string `json:"avatar"`
-        Phone string `json:"phone"`
+        Nickname string `json:"nickname,optional" valid:"code"`
+        Avatar string `json:"avatar,optional" valid:"avatar"`
+        Phone string `json:"phone,optional" valid:"phone"`
     }
     UserUpdateResp {
         UserId string `json:"user_id"`
