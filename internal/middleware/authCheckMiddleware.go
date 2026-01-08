@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v4/request"
 	"github.com/pkg/errors"
-	"github.com/pudongping/momento-api/constant"
+	"github.com/pudongping/momento-api/internal/constant"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/model"
 	"github.com/spf13/cast"

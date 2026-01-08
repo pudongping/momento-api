@@ -9,9 +9,9 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
-	"github.com/pudongping/momento-api/constant"
 	"github.com/pudongping/momento-api/coreKit/errcode"
 	"github.com/pudongping/momento-api/coreKit/helpers/flake"
+	"github.com/pudongping/momento-api/internal/constant"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/internal/types"
 	"github.com/pudongping/momento-api/model"
