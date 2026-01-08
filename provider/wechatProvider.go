@@ -1,4 +1,4 @@
-package service
+package provider
 
 import (
 	"context"
@@ -10,22 +10,22 @@ import (
 	wechatMiniCfg "github.com/silenceper/wechat/v2/miniprogram/config"
 )
 
-type WechatService struct {
+type WechatProvider struct {
 	ctx context.Context
 }
 
-func NewWechatService(ctx context.Context) *WechatService {
-	return &WechatService{ctx: ctx}
+func NewWechatProvider(ctx context.Context) *WechatProvider {
+	return &WechatProvider{ctx: ctx}
 }
 
-func (svc *WechatService) GetWXMiniOpenID(appID, appSecret, code string) (openID string, err error) {
+func (pvd *WechatProvider) GetWXMiniOpenID(appID, appSecret, code string) (openID string, err error) {
 	miniprogram := wechatPkg.NewWechat().GetMiniProgram(&wechatMiniCfg.Config{
 		AppID:     appID,
 		AppSecret: appSecret,
 		Cache:     wecahtCache.NewMemory(),
 	})
 
-	resp, err := miniprogram.GetAuth().Code2SessionContext(svc.ctx, code)
+	resp, err := miniprogram.GetAuth().Code2SessionContext(pvd.ctx, code)
 	if err != nil || resp.ErrCode != 0 || resp.OpenID == "" {
 		return "", errors.Errorf("微信小程序授权请求失败 err -> %v, code -> %s, resp -> %+v", err, code, resp)
 	}

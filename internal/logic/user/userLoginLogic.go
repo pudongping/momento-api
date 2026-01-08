@@ -15,7 +15,7 @@ import (
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/internal/types"
 	"github.com/pudongping/momento-api/model"
-	"github.com/pudongping/momento-api/service"
+	"github.com/pudongping/momento-api/provider"
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/stringx"
 
@@ -95,10 +95,10 @@ func (l *UserLoginLogic) FetchOpenID(code string) (openID string, err error) {
 	}
 
 	// 调用微信接口获取 openID
-	wechatService := service.NewWechatService(l.ctx)
+	wechatProvider := provider.NewWechatProvider(l.ctx)
 	appID := l.svcCtx.Config.WXMiniProgram.AppID
 	appSecret := l.svcCtx.Config.WXMiniProgram.AppSecret
-	openID, err = wechatService.GetWXMiniOpenID(appID, appSecret, code)
+	openID, err = wechatProvider.GetWXMiniOpenID(appID, appSecret, code)
 	if err != nil {
 		return "", errors.Wrapf(err, "FetchOpenID code : %s", code)
 	}

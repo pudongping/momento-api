@@ -1,3 +1,5 @@
+// 自定义中间件
+// https://go-zero.dev/docs/tutorials/api/middleware
 package middleware
 
 import (
