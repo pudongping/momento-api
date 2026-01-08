@@ -70,6 +70,7 @@ function get_module_from_go_mod() {
   printf '%s' "$module"
 }
 
+# 在指定目录下递归替换所有文件中的指定字符串
 function replace_in_dir() {
   # 参数：目录 path, module, word
   local dir="${1:-}"
@@ -109,11 +110,13 @@ function replace_in_dir() {
   fi
 }
 
+# 替换 internal/handler 目录下的 module 名称
 function replace_module_api() {
   module="$(get_module_from_go_mod)"
   replace_in_dir ./internal/handler "$module" "$Tpl_GoCTL_Module_Name"
 }
 
+# 替换模型目录下的 module 名称
 function replace_module_model() {
   module="$(get_module_from_go_mod)"
   replace_in_dir "$Model_Dir" "$module" "$Tpl_GoCTL_Module_Name"
@@ -176,11 +179,11 @@ function usage() {
     cat <<EOF
 Usage: ./local_run.sh {model|genapi|mddoc|tplinit|goctl ...}
 Commands:
-  model <table_name>  生成模型文件，第二个参数为表名 比如： ./local_run.sh model users
-  genapi        生成 go api 代码
-  mddoc        生成 markdown 文档
-  tplinit      模版初始化
-  goctl ...    直接透传到 goctl，可携带任意参数，比如： ./local_run.sh goctl env
+  model <table_name>    生成模型文件，第二个参数为表名 比如： ./local_run.sh model users
+  genapi                生成 go api 代码
+  mddoc                 生成 markdown 文档
+  tplinit               模版初始化
+  goctl ...             直接透传到 goctl，可携带任意参数，比如： ./local_run.sh goctl env
 EOF
 }
 
@@ -210,13 +213,9 @@ case "$cmd" in
     # 生成模型文件，第二个参数为表名
     go_zero_gen_model $2
     ;;
-  "")
+  *)
     # 未提供任何参数时，打印用法信息并退出非零
     usage
-    exit 1
-    ;;
-  *)
-    echo "Unknown command: $cmd" >&2
     exit 1
     ;;
 esac
