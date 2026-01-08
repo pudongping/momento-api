@@ -5,15 +5,19 @@ package svc
 
 import (
 	"github.com/pudongping/momento-api/internal/config"
+	"github.com/pudongping/momento-api/internal/middleware"
 	"github.com/pudongping/momento-api/model"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/rest"
 )
 
 type ServiceContext struct {
 	Config      config.Config
 	RedisClient *redis.Redis
 	MysqlClient sqlx.SqlConn
+
+	AuthCheckMiddleware rest.Middleware
 
 	UserModel model.UsersModel
 }
@@ -31,11 +35,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		PingTimeout: 0,
 	})
 
+	userModel := model.NewUsersModel(mysqlConn)
+
 	return &ServiceContext{
 		Config:      c,
 		RedisClient: redisClient,
 		MysqlClient: mysqlConn,
 
-		UserModel: model.NewUsersModel(mysqlConn),
+		AuthCheckMiddleware: middleware.NewAuthCheckMiddleware(userModel, redisClient).Handle,
+
+		UserModel: userModel,
 	}
 }
