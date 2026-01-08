@@ -13,6 +13,9 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/Masterminds/squirrel"
+	"github.com/pudongping/momento-api/coreKit/paginator"
 )
 
 var (
@@ -25,6 +28,23 @@ var (
 type (
 	usersModel interface {
 		Insert(ctx context.Context, data *Users) (sql.Result, error)
+
+		// 自定义模版中扩展的方法 start ----->
+		GetTableName() string
+		Transaction(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error
+		ExecContext(ctx context.Context, session sqlx.Session, query string, args ...interface{}) (sql.Result, error)
+		DeleteFilter(ctx context.Context, session sqlx.Session, where squirrel.Sqlizer) (sql.Result, error)
+		UpdateFilter(ctx context.Context, session sqlx.Session, updateData map[string]interface{}, where squirrel.Sqlizer) (sql.Result, error)
+		SelectBuilder(fields ...string) squirrel.SelectBuilder
+		CountBuilder(field ...string) squirrel.SelectBuilder
+		SumBuilder(field string) squirrel.SelectBuilder
+		FindCount(ctx context.Context, countBuilder squirrel.SelectBuilder) (int64, error)
+		FindSum(ctx context.Context, sumBuilder squirrel.SelectBuilder) (float64, error)
+		FindAny(ctx context.Context, rowBuilder squirrel.SelectBuilder, bindings interface{}) error
+		FindOneByQuery(ctx context.Context, rowBuilder squirrel.SelectBuilder) (*Users, error)
+		FindAll(ctx context.Context, rowBuilder squirrel.SelectBuilder) ([]*Users, error)
+		FindListByPage(ctx context.Context, rowBuilder squirrel.SelectBuilder, page, perPage int64, orderBy string) ([]*Users, *paginator.Pagination, error)
+		// 自定义模版中扩展的方法 end ---->
 		FindOne(ctx context.Context, userId uint64) (*Users, error)
 		FindOneByOpenid(ctx context.Context, openid string) (*Users, error)
 		Update(ctx context.Context, data *Users) error
@@ -98,6 +118,190 @@ func (m *defaultUsersModel) Insert(ctx context.Context, data *Users) (sql.Result
 	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.Openid, data.Unionid, data.Nickname, data.Avatar, data.Phone, data.IsDisable, data.RegisterIp, data.LoginIp, data.LastLoginTime, data.CreatedAt, data.UpdatedAt)
 	return ret, err
 }
+
+// 自定义模版中扩展的方法 start ----->
+
+func (m *defaultUsersModel) GetTableName() string {
+	return m.tableName()
+}
+
+func (m *defaultUsersModel) Transaction(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error {
+
+	return m.conn.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
+		return fn(ctx, session)
+	})
+
+}
+
+func (m *defaultUsersModel) ExecContext(ctx context.Context, session sqlx.Session, query string, args ...interface{}) (sql.Result, error) {
+	if session != nil {
+		return session.ExecCtx(ctx, query, args...)
+	}
+	return m.conn.ExecCtx(ctx, query, args...)
+}
+
+func (m *defaultUsersModel) DeleteFilter(ctx context.Context, session sqlx.Session, where squirrel.Sqlizer) (sql.Result, error) {
+	deleteBuilder := squirrel.Delete(m.table).Where(where)
+	query, values, err := deleteBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	return m.ExecContext(ctx, session, query, values...)
+}
+
+func (m *defaultUsersModel) UpdateFilter(ctx context.Context, session sqlx.Session, updateData map[string]interface{}, where squirrel.Sqlizer) (sql.Result, error) {
+	updateBuilder := squirrel.Update(m.table).SetMap(updateData).Where(where)
+	query, values, err := updateBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	return m.ExecContext(ctx, session, query, values...)
+}
+
+func (m *defaultUsersModel) SelectBuilder(fields ...string) squirrel.SelectBuilder {
+	f := usersRows
+	if len(fields) > 0 {
+		f = strings.Join(fields, ",")
+	}
+	return squirrel.Select(f).From(m.table)
+}
+
+func (m *defaultUsersModel) CountBuilder(field ...string) squirrel.SelectBuilder {
+	f := "*"
+	if len(field) > 0 && field[0] != "" {
+		f = field[0]
+	}
+	return squirrel.Select("COUNT(" + f + ")").From(m.table)
+}
+
+func (m *defaultUsersModel) SumBuilder(field string) squirrel.SelectBuilder {
+	return squirrel.Select("IFNULL(SUM(" + field + "),0)").From(m.table)
+}
+
+func (m *defaultUsersModel) FindCount(ctx context.Context, countBuilder squirrel.SelectBuilder) (int64, error) {
+	query, values, err := countBuilder.ToSql()
+	if err != nil {
+		return 0, err
+	}
+
+	var resp int64
+
+	err = m.conn.QueryRowCtx(ctx, &resp, query, values...)
+
+	switch err {
+	case nil:
+		return resp, nil
+	default:
+		return 0, err
+	}
+}
+
+func (m *defaultUsersModel) FindSum(ctx context.Context, sumBuilder squirrel.SelectBuilder) (float64, error) {
+	query, values, err := sumBuilder.ToSql()
+	if err != nil {
+		return 0, err
+	}
+
+	var resp float64
+
+	err = m.conn.QueryRowCtx(ctx, &resp, query, values...)
+
+	switch err {
+	case nil:
+		return resp, nil
+	default:
+		return 0, err
+	}
+}
+
+func (m *defaultUsersModel) FindAny(ctx context.Context, rowBuilder squirrel.SelectBuilder, bindings interface{}) error {
+	query, values, err := rowBuilder.ToSql()
+	if err != nil {
+		return err
+	}
+
+	return m.conn.QueryRowsCtx(ctx, bindings, query, values...)
+
+}
+
+func (m *defaultUsersModel) FindOneByQuery(ctx context.Context, rowBuilder squirrel.SelectBuilder) (*Users, error) {
+	query, values, err := rowBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Users
+
+	err = m.conn.QueryRowCtx(ctx, &resp, query, values...)
+
+	switch err {
+	case nil:
+		return &resp, nil
+	default:
+		return nil, err
+	}
+
+}
+
+func (m *defaultUsersModel) FindAll(ctx context.Context, rowBuilder squirrel.SelectBuilder) ([]*Users, error) {
+	query, values, err := rowBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var resp []*Users
+
+	err = m.conn.QueryRowsCtx(ctx, &resp, query, values...)
+
+	switch err {
+	case nil:
+		return resp, nil
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultUsersModel) FindListByPage(ctx context.Context, rowBuilder squirrel.SelectBuilder, page, perPage int64, orderBy string) ([]*Users, *paginator.Pagination, error) {
+	// 构建查询数据总条数的 sql 语句
+	countQuery, countValues, err := paginator.CountDataSqlBuilder(rowBuilder).ToSql()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var total int64
+
+	err = m.conn.QueryRowCtx(ctx, &total, countQuery, countValues...)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	currentPage, limit, offset := paginator.PrepareOffsetLimit(page, perPage)
+	pagination := paginator.NewPagination(total, currentPage, limit)
+
+	builder := rowBuilder.Offset(uint64(offset)).Limit(uint64(limit))
+	builder = paginator.WithOrderBy(orderBy, builder)
+
+	query, values, err := builder.ToSql()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var resp []*Users
+
+	err = m.conn.QueryRowsCtx(ctx, &resp, query, values...)
+
+	switch err {
+	case nil:
+		return resp, pagination, nil
+	default:
+		return nil, nil, err
+	}
+}
+
+// 自定义模版中扩展的方法 end ---->
 
 func (m *defaultUsersModel) Update(ctx context.Context, newData *Users) error {
 	query := fmt.Sprintf("update %s set %s where `user_id` = ?", m.table, usersRowsWithPlaceHolder)

@@ -150,7 +150,7 @@ func (l *UserLoginLogic) UpdateUser(userID uint64, clientIP string) error {
 
 	where := squirrel.Eq{"user_id": userID}
 
-	_, err := l.svcCtx.UserModel.UpdateFilter(l.ctx, updateMap, where)
+	_, err := l.svcCtx.UserModel.UpdateFilter(l.ctx, nil, updateMap, where)
 	if err != nil {
 		l.Logger.Errorf("更新用户登录信息失败 userID : %d, err : %v", userID, err)
 		return errors.Wrapf(err, "UpdateUser UpdateFilter userID : %d", userID)

@@ -12,5 +12,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
 
+	"github.com/Masterminds/squirrel"
+	"your-project-module-name/coreKit/paginator"
+
 	{{.third}}
 )
