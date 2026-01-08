@@ -32,9 +32,6 @@ func NewUserSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 
 func (l *UserSettingsLogic) UserSettings(req *types.UserSettingsReq) (*types.UserSettingsResp, error) {
 	userID := ctxData.GetUIDFromCtx(l.ctx)
-	if userID <= 0 {
-		return nil, errcode.Fail.Msgr("用户未登录")
-	}
 
 	userSettings, err := l.svcCtx.UserSettingModel.FindOneByUserId(l.ctx, cast.ToUint64(userID))
 	if err != nil && !errors.Is(err, model.ErrNotFound) {

@@ -43,6 +43,12 @@ type UserInfoResp struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+type UserLogoutReq struct {
+}
+
+type UserLogoutResp struct {
+}
+
 type UserSettingsReq struct {
 }
 

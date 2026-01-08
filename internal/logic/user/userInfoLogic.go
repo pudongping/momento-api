@@ -35,9 +35,6 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 
 func (l *UserInfoLogic) UserInfo(req *types.UserInfoReq) (*types.UserInfoResp, error) {
 	userID := ctxData.GetUIDFromCtx(l.ctx)
-	if userID <= 0 {
-		return nil, errcode.Fail.Msgr("用户未登录")
-	}
 
 	queryBuilder := l.svcCtx.UserModel.SelectBuilder().
 		Where("user_id = ?", cast.ToUint64(userID)).

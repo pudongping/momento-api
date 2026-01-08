@@ -1,8 +1,34 @@
 type (
+    UserLogoutReq {
+    }
+    UserLogoutResp {
+    }
+)
+
+type (
     UserInfoReq {
 
     }
     UserInfoResp {
+        UserId string `json:"user_id"`
+        OpenId string `json:"openid"`
+        UnionId string `json:"unionid"`
+        Nickname string `json:"nickname"`
+        Avatar string `json:"avatar"`
+        Phone string `json:"phone"`
+        IsDisable int `json:"is_disable"`
+        CreatedAt int64 `json:"created_at"`
+        UpdatedAt int64 `json:"updated_at"`
+    }
+)
+
+type (
+    UserUpdateReq {
+        Nickname string `json:"nickname,optional" valid:"code"`
+        Avatar string `json:"avatar,optional" valid:"avatar"`
+        Phone string `json:"phone,optional" valid:"phone"`
+    }
+    UserUpdateResp {
         UserId string `json:"user_id"`
         OpenId string `json:"openid"`
         UnionId string `json:"unionid"`
@@ -34,24 +60,5 @@ type (
         Budget float64 `json:"budget,optional"`
     }
     UpdateUserSettingsResp {
-    }
-)
-
-type (
-    UserUpdateReq {
-        Nickname string `json:"nickname,optional" valid:"code"`
-        Avatar string `json:"avatar,optional" valid:"avatar"`
-        Phone string `json:"phone,optional" valid:"phone"`
-    }
-    UserUpdateResp {
-        UserId string `json:"user_id"`
-        OpenId string `json:"openid"`
-        UnionId string `json:"unionid"`
-        Nickname string `json:"nickname"`
-        Avatar string `json:"avatar"`
-        Phone string `json:"phone"`
-        IsDisable int `json:"is_disable"`
-        CreatedAt int64 `json:"created_at"`
-        UpdatedAt int64 `json:"updated_at"`
     }
 )

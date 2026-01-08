@@ -30,6 +30,10 @@ service momentoapi {
 	middleware: AuthCheckMiddleware
 )
 service momentoapi {
+	@doc "用户退出登录"
+	@handler userLogout
+	post /user/logout (UserLogoutReq) returns (UserLogoutResp)
+
 	@doc "获取用户信息"
 	@handler userInfo
 	get /user/info (UserInfoReq) returns (UserInfoResp)

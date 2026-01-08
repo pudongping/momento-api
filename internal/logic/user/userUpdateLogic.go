@@ -37,9 +37,6 @@ func NewUserUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserUp
 
 func (l *UserUpdateLogic) UserUpdate(req *types.UserUpdateReq) (*types.UserUpdateResp, error) {
 	userID := ctxData.GetUIDFromCtx(l.ctx)
-	if userID <= 0 {
-		return nil, errcode.Fail.Msgr("用户未登录")
-	}
 
 	// 仅更新非空字段
 	updateMap := map[string]interface{}{}
