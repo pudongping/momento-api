@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	tag "github.com/pudongping/momento-api/internal/handler/tag"
 	user "github.com/pudongping/momento-api/internal/handler/user"
 	"github.com/pudongping/momento-api/internal/svc"
 
@@ -13,6 +14,21 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
+			[]rest.Route{
+				{
+					// 获取标签列表
+					Method:  http.MethodGet,
+					Path:    "/tags/list",
+					Handler: tag.TagListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.JWTAuth.AccessSecret),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{

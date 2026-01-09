@@ -1,66 +1,66 @@
 syntax = "v1"
 
-info(
-    title: "「时光小账本」小程序接口"
-    desc: "小程序接口模块"
-    author: "Alex"
-    email: ""
-    version: "v1"
+info (
+	title:   "「时光小账本」小程序接口"
+	desc:    "小程序接口模块"
+	author:  "Alex"
+	email:   ""
+	version: "v1"
 )
 
 import (
-    "user/login.api"
-    "user/user.api"
-    "tag/tag.api"
+	"user/login.api"
+	"user/user.api"
+	"tag/tag.api"
 )
 
-@server(
-    group: user
-    tags: "用户相关-无需登录"
+@server (
+	group: user
+	tags:  "用户相关-无需登录"
 )
 service momentoapi {
-    @doc "小程序授权登录"
-    @handler userLogin
-    post /user/login (LoginReq) returns (LoginResp)
+	@doc "小程序授权登录"
+	@handler userLogin
+	post /user/login (LoginReq) returns (LoginResp)
 }
 
-@server(
-    group: user
-    tags: "用户相关-需要登录"
-    jwt: JWTAuth
-    middleware: AuthCheckMiddleware
+@server (
+	group:      user
+	tags:       "用户相关-需要登录"
+	jwt:        JWTAuth
+	middleware: AuthCheckMiddleware
 )
 service momentoapi {
-    @doc "用户退出登录"
-    @handler userLogout
-    post /user/logout (UserLogoutReq) returns (UserLogoutResp)
+	@doc "用户退出登录"
+	@handler userLogout
+	post /user/logout (UserLogoutReq) returns (UserLogoutResp)
 
-    @doc "获取用户信息"
-    @handler userInfo
-    get /user/info (UserInfoReq) returns (UserInfoResp)
+	@doc "获取用户信息"
+	@handler userInfo
+	get /user/info (UserInfoReq) returns (UserInfoResp)
 
-    @doc "更新用户信息"
-    @handler userUpdate
-    put /user/update (UserUpdateReq) returns (UserUpdateResp)
+	@doc "更新用户信息"
+	@handler userUpdate
+	put /user/update (UserUpdateReq) returns (UserUpdateResp)
 
-    @doc "获取用户设置"
-    @handler userSettings
-    get /user/settings (UserSettingsReq) returns (UserSettingsResp)
+	@doc "获取用户设置"
+	@handler userSettings
+	get /user/settings (UserSettingsReq) returns (UserSettingsResp)
 
-    @doc "更新用户设置"
-    @handler updateUserSettings
-    put /user/settings (UpdateUserSettingsReq) returns (UpdateUserSettingsResp)
+	@doc "更新用户设置"
+	@handler updateUserSettings
+	put /user/settings (UpdateUserSettingsReq) returns (UpdateUserSettingsResp)
 }
 
-@server(
-    group: tag
-    tags: "标签相关"
-    jwt: JWTAuth
-    middleware: AuthCheckMiddleware
+@server (
+	group:      tag
+	tags:       "标签相关"
+	jwt:        JWTAuth
+	middleware: AuthCheckMiddleware
 )
 service momentoapi {
-    @doc "获取标签列表"
-    @handler tagList
-    get /tags/list (TagListReq) returns ([]TagListResp)
+	@doc "获取标签列表"
+	@handler tagList
+	get /tags/list (TagListReq) returns ([]TagListResp)
 }
 

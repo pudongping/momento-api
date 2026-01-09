@@ -20,9 +20,24 @@ type LoginResp struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+type TagListReq struct {
+	Type string `json:"type,optional" valid:"type"` // expense-支出 income-收入
+}
+
+type TagListResp struct {
+	TagId    int64  `json:"tag_id"`
+	UserId   string `json:"user_id"` // 0-系统标签 非0-用户自定义标签
+	Name     string `json:"name"`
+	Color    string `json:"color"`
+	Icon     string `json:"icon"`
+	IsSystem int64  `json:"is_system"` // 1-系统标签 2-用户自定义标签
+	Type     string `json:"type"`      // expense-支出 income-收入
+	SortNum  int64  `json:"sort_num"`  // 排序序号
+}
+
 type UpdateUserSettingsReq struct {
-	BackgroundUrl string  `json:"background_url,optional"`
-	Budget        float64 `json:"budget,optional"`
+	BackgroundUrl string  `json:"background_url,optional" valid:"background_url"`
+	Budget        float64 `json:"budget,optional" valid:"budget"`
 }
 
 type UpdateUserSettingsResp struct {
