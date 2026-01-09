@@ -1,4 +1,5 @@
 type (
+    // 登录
     LoginReq {
         Code string `json:"code" valid:"code"`
     }
@@ -13,5 +14,13 @@ type (
         Token string `json:"token"` // JWT token
         CreatedAt int64 `json:"created_at"`
         UpdatedAt int64 `json:"updated_at"`
+    }
+)
+
+type (
+    // 退出登录
+    UserLogoutReq {
+    }
+    UserLogoutResp {
     }
 )

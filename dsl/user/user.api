@@ -1,11 +1,5 @@
 type (
-    UserLogoutReq {
-    }
-    UserLogoutResp {
-    }
-)
-
-type (
+    // 获取用户信息
     UserInfoReq {
 
     }
@@ -23,6 +17,7 @@ type (
 )
 
 type (
+    // 更新用户信息
     UserUpdateReq {
         Nickname string `json:"nickname,optional" valid:"code"`
         Avatar string `json:"avatar,optional" valid:"avatar"`
@@ -42,6 +37,7 @@ type (
 )
 
 type (
+    // 获取用户设置信息
     UserSettingsReq {
     }
     UserSettingsResp {
@@ -55,9 +51,10 @@ type (
 )
 
 type (
+    // 更新用户设置信息
     UpdateUserSettingsReq {
-        BackgroundUrl string `json:"background_url,optional"`
-        Budget float64 `json:"budget,optional"`
+        BackgroundUrl string `json:"background_url,optional" valid:"background_url"`
+        Budget float64 `json:"budget,optional" valid:"budget"`
     }
     UpdateUserSettingsResp {
     }
