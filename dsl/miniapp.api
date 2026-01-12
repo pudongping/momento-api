@@ -66,5 +66,13 @@ service momentoapi {
 	@doc "添加自定义标签"
 	@handler tagAdd
 	post /tags/add (TagAddReq) returns (TagAddResp)
+
+	@doc "更新自定义标签"
+	@handler tagUpdate
+	put /tags/update (TagUpdateReq) returns (TagUpdateResp)
+
+	@doc "删除标签"
+	@handler tagDelete
+	delete /tags/delete (TagDeleteReq) returns (TagDeleteResp)
 }
 

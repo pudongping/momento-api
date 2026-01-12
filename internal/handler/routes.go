@@ -25,10 +25,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: tag.TagAddHandler(serverCtx),
 				},
 				{
+					// 删除标签
+					Method:  http.MethodDelete,
+					Path:    "/tags/delete",
+					Handler: tag.TagDeleteHandler(serverCtx),
+				},
+				{
 					// 获取标签列表
 					Method:  http.MethodGet,
 					Path:    "/tags/list",
 					Handler: tag.TagListHandler(serverCtx),
+				},
+				{
+					// 更新自定义标签
+					Method:  http.MethodPut,
+					Path:    "/tags/update",
+					Handler: tag.TagUpdateHandler(serverCtx),
 				},
 			}...,
 		),

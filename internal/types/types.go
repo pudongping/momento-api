@@ -30,6 +30,13 @@ type TagAddReq struct {
 type TagAddResp struct {
 }
 
+type TagDeleteReq struct {
+	TagId int64 `json:"tag_id" valid:"tag_id"` // 标签ID
+}
+
+type TagDeleteResp struct {
+}
+
 type TagListReq struct {
 	Type string `json:"type,optional" valid:"type"` // expense-支出 income-收入
 }
@@ -43,6 +50,17 @@ type TagListResp struct {
 	IsSystem int64  `json:"is_system"` // 1-系统标签 2-用户自定义标签
 	Type     string `json:"type"`      // expense-支出 income-收入
 	SortNum  int64  `json:"sort_num"`  // 排序序号
+}
+
+type TagUpdateReq struct {
+	TagId int64  `json:"tag_id" valid:"tag_id"`        // 标签ID
+	Name  string `json:"name,optional" valid:"name"`   // 标签名称 1-6个字符
+	Color string `json:"color,optional" valid:"color"` // 标签颜色 如#E91E63
+	Icon  string `json:"icon,optional" valid:"icon"`   // 标签图标 最多10个字符
+	Type  string `json:"type,optional" valid:"type"`   // 标签类型 expense或income
+}
+
+type TagUpdateResp struct {
 }
 
 type UpdateUserSettingsReq struct {

@@ -25,3 +25,25 @@ type (
     TagAddResp {
     }
 )
+
+type (
+    // 更新自定义标签
+    TagUpdateReq {
+        TagId int64 `json:"tag_id" valid:"tag_id"`               // 标签ID
+        Name string `json:"name,optional" valid:"name"`          // 标签名称 1-6个字符
+        Color string `json:"color,optional" valid:"color"`       // 标签颜色 如#E91E63
+        Icon string `json:"icon,optional" valid:"icon"`          // 标签图标 最多10个字符
+        Type string `json:"type,optional" valid:"type"`          // 标签类型 expense或income
+    }
+    TagUpdateResp {
+    }
+)
+
+type (
+    // 删除标签
+    TagDeleteReq {
+        TagId int64 `json:"tag_id" valid:"tag_id"`               // 标签ID
+    }
+    TagDeleteResp {
+    }
+)
