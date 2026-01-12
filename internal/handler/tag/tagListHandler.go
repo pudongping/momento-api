@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	"github.com/pudongping/momento-api/coreKit/responses"
+	"github.com/pudongping/momento-api/coreKit/validator"
+	"github.com/pudongping/momento-api/internal/requests"
 
 	"github.com/pudongping/momento-api/internal/logic/tag"
 	"github.com/pudongping/momento-api/internal/svc"
@@ -20,6 +22,11 @@ func TagListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		var req types.TagListReq
 		if err := httpx.Parse(r, &req); err != nil {
 			responses.ToParamValidateResponse(r, w, err)
+			return
+		}
+
+		if msg, ok := validator.CallValidate(&req, requests.TagListRequestCheck); !ok {
+			responses.ToParamValidateResponse(r, w, nil, msg)
 			return
 		}
 

@@ -21,6 +21,7 @@ type ServiceContext struct {
 
 	UserModel        model.UsersModel
 	UserSettingModel model.UserSettingsModel
+	TagsModel        model.TagsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -38,6 +39,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	userModel := model.NewUsersModel(mysqlConn)
 	userSettingModel := model.NewUserSettingsModel(mysqlConn)
+	tagsModel := model.NewTagsModel(mysqlConn)
 
 	return &ServiceContext{
 		Config:      c,
@@ -48,5 +50,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		UserModel:        userModel,
 		UserSettingModel: userSettingModel,
+		TagsModel:        tagsModel,
 	}
 }
