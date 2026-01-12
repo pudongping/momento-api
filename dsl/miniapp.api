@@ -62,5 +62,9 @@ service momentoapi {
 	@doc "获取标签列表"
 	@handler tagList
 	get /tags/list (TagListReq) returns ([]TagListResp)
+
+	@doc "添加自定义标签"
+	@handler tagAdd
+	post /tags/add (TagAddReq) returns (TagAddResp)
 }
 

@@ -20,6 +20,16 @@ type LoginResp struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+type TagAddReq struct {
+	Name  string `json:"name" valid:"name"`            // 标签名称 1-6个字符
+	Color string `json:"color,optional" valid:"color"` // 标签颜色 如#E91E63
+	Icon  string `json:"icon,optional" valid:"icon"`   // 标签图标 最多10个字符
+	Type  string `json:"type" valid:"type"`            // 标签类型 expense或income
+}
+
+type TagAddResp struct {
+}
+
 type TagListReq struct {
 	Type string `json:"type,optional" valid:"type"` // expense-支出 income-收入
 }

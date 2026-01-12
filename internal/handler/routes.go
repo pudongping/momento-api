@@ -19,6 +19,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
 			[]rest.Route{
 				{
+					// 添加自定义标签
+					Method:  http.MethodPost,
+					Path:    "/tags/add",
+					Handler: tag.TagAddHandler(serverCtx),
+				},
+				{
 					// 获取标签列表
 					Method:  http.MethodGet,
 					Path:    "/tags/list",
