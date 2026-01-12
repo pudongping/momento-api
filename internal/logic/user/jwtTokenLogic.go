@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/pudongping/momento-api/coreKit"
+	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/jwtToken"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -41,6 +41,6 @@ func (l *JwtTokenLogic) GenerateToken(userID int64) (string, int64, int64, error
 	accessSecret := l.svcCtx.Config.JWTAuth.AccessSecret
 	refreshTime := now + accessExpire/2
 
-	token, err := jwtToken.GenJwtToken(accessSecret, coreKit.CtxKeyJwtUserId, now, accessExpire, userID)
+	token, err := jwtToken.GenJwtToken(accessSecret, ctxData.CtxKeyJwtUserId, now, accessExpire, userID)
 	return token, accessExpire, refreshTime, err
 }
