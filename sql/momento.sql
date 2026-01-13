@@ -257,13 +257,13 @@ CREATE TABLE `upload_files`
 -- 初始化系统标签数据
 -- =============================================
 INSERT INTO `tags` (`name`, `color`, `icon`, `is_system`, `type`, `sort_num`)
-VALUES ('买菜', '#4CAF50', 'shopping-cart', 1, 'expense', 1),
-       ('房贷', '#2196F3', 'home', 1, 'expense', 2),
-       ('孩子', '#FF9800', 'child', 1, 'expense', 3),
-       ('餐饮', '#F44336', 'food', 1, 'expense', 4),
-       ('交通', '#9C27B0', 'car', 1, 'expense', 5),
-       ('其他', '#607D8B', 'more', 1, 'expense', 6),
-       ('工资', '#4CAF50', 'wallet', 1, 'income', 7),
-       ('奖金', '#FF9800', 'gift', 1, 'income', 8),
-       ('投资', '#2196F3', 'chart', 1, 'income', 9),
-       ('其他收入', '#607D8B', 'more', 1, 'income', 10);
+VALUES ('买菜', '#4CAF50', 'cart-filled', 1, 'expense', 1),
+       ('房贷', '#2196F3', 'home-filled', 1, 'expense', 2),
+       ('孩子', '#FF9800', 'staff-filled', 1, 'expense', 3),
+       ('餐饮', '#F44336', 'shop-filled', 1, 'expense', 4),
+       ('交通', '#9C27B0', 'star-filled', 1, 'expense', 5),
+       ('其他', '#607D8B', 'more-filled', 1, 'expense', 6),
+       ('工资', '#4CAF50', 'wallet-filled', 1, 'income', 7),
+       ('奖金', '#FF9800', 'gift-filled', 1, 'income', 8),
+       ('投资', '#2196F3', 'medal-filled', 1, 'income', 9),
+       ('其他收入', '#607D8B', 'flag-filled', 1, 'income', 10);
