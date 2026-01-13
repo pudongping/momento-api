@@ -33,7 +33,7 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 	}
 }
 
-func (l *UserInfoLogic) UserInfo(req *types.UserInfoReq) (*types.UserInfoResp, error) {
+func (l *UserInfoLogic) UserInfo() (*types.UserInfoResp, error) {
 	userID := ctxData.GetUIDFromCtx(l.ctx)
 
 	queryBuilder := l.svcCtx.UserModel.SelectBuilder().

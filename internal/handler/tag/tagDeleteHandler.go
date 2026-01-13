@@ -31,7 +31,7 @@ func TagDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := tag.NewTagDeleteLogic(r.Context(), svcCtx)
-		resp, err := l.TagDelete(&req)
-		responses.ToResponse(r, w, resp, err)
+		err := l.TagDelete(&req)
+		responses.ToResponse(r, w, nil, err)
 	}
 }

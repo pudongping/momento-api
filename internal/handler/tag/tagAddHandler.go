@@ -31,7 +31,7 @@ func TagAddHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := tag.NewTagAddLogic(r.Context(), svcCtx)
-		resp, err := l.TagAdd(&req)
-		responses.ToResponse(r, w, resp, err)
+		err := l.TagAdd(&req)
+		responses.ToResponse(r, w, nil, err)
 	}
 }

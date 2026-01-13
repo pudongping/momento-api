@@ -31,7 +31,7 @@ func TagUpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := tag.NewTagUpdateLogic(r.Context(), svcCtx)
-		resp, err := l.TagUpdate(&req)
-		responses.ToResponse(r, w, resp, err)
+		err := l.TagUpdate(&req)
+		responses.ToResponse(r, w, nil, err)
 	}
 }

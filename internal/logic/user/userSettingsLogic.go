@@ -30,7 +30,7 @@ func NewUserSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 	}
 }
 
-func (l *UserSettingsLogic) UserSettings(req *types.UserSettingsReq) (*types.UserSettingsResp, error) {
+func (l *UserSettingsLogic) UserSettings() (*types.UserSettingsResp, error) {
 	userID := ctxData.GetUIDFromCtx(l.ctx)
 
 	userSettings, err := l.svcCtx.UserSettingModel.FindOneByUserId(l.ctx, cast.ToUint64(userID))

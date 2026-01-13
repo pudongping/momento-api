@@ -35,7 +35,7 @@ func NewTagUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TagUpda
 	}
 }
 
-func (l *TagUpdateLogic) TagUpdate(req *types.TagUpdateReq) (*types.TagUpdateResp, error) {
+func (l *TagUpdateLogic) TagUpdate(req *types.TagUpdateReq) error {
 	userID := ctxData.GetUIDFromCtx(l.ctx)
 	userIDUint := cast.ToUint64(userID)
 
@@ -43,17 +43,17 @@ func (l *TagUpdateLogic) TagUpdate(req *types.TagUpdateReq) (*types.TagUpdateRes
 	tag, err := l.svcCtx.TagsModel.FindOne(l.ctx, cast.ToUint64(req.TagId))
 	if err != nil {
 		l.Logger.Errorf("查询标签失败 userID : %d, tagID : %d, err : %v", userID, req.TagId, err)
-		return nil, errcode.DBError.WithError(errors.Wrapf(err, "TagUpdate FindOne tagID : %d", req.TagId)).Msgr("标签不存在")
+		return errcode.DBError.WithError(errors.Wrapf(err, "TagUpdate FindOne tagID : %d", req.TagId)).Msgr("标签不存在")
 	}
 
 	// 检查标签是否为系统标签，不允许修改系统标签
 	if tag.IsSystem == model.TagsIsSystemYes {
-		return nil, errcode.Fail.Msgr("系统标签不允许修改")
+		return errcode.Fail.Msgr("系统标签不允许修改")
 	}
 
 	// 检查标签是否属于当前用户，不允许修改其他用户的标签
 	if tag.UserId != userIDUint {
-		return nil, errcode.Fail.Msgr("没有权限修改该标签")
+		return errcode.Fail.Msgr("没有权限修改该标签")
 	}
 
 	// 仅更新非空字段
@@ -73,7 +73,7 @@ func (l *TagUpdateLogic) TagUpdate(req *types.TagUpdateReq) (*types.TagUpdateRes
 
 	// 如果全部为空，则不做更新
 	if len(updateMap) == 0 {
-		return nil, errcode.Fail.Msgr("没有可更新的标签信息")
+		return errcode.Fail.Msgr("没有可更新的标签信息")
 	}
 
 	// 补充更新时间
@@ -83,8 +83,8 @@ func (l *TagUpdateLogic) TagUpdate(req *types.TagUpdateReq) (*types.TagUpdateRes
 	where := squirrel.Eq{"tag_id": cast.ToUint64(req.TagId)}
 	if _, err := l.svcCtx.TagsModel.UpdateFilter(l.ctx, nil, updateMap, where); err != nil {
 		l.Logger.Errorf("更新标签失败 userID : %d, tagID : %d, err : %v", userID, req.TagId, err)
-		return nil, errcode.DBError.WithError(errors.Wrapf(err, "TagUpdate UpdateFilter tagID : %d", req.TagId)).Msgr("更新标签失败")
+		return errcode.DBError.WithError(errors.Wrapf(err, "TagUpdate UpdateFilter tagID : %d", req.TagId)).Msgr("更新标签失败")
 	}
 
-	return &types.TagUpdateResp{}, nil
+	return nil
 }

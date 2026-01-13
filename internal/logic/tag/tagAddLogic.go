@@ -33,7 +33,7 @@ func NewTagAddLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TagAddLogi
 	}
 }
 
-func (l *TagAddLogic) TagAdd(req *types.TagAddReq) (*types.TagAddResp, error) {
+func (l *TagAddLogic) TagAdd(req *types.TagAddReq) error {
 	userID := ctxData.GetUIDFromCtx(l.ctx)
 	userIDUint := cast.ToUint64(userID)
 
@@ -45,11 +45,11 @@ func (l *TagAddLogic) TagAdd(req *types.TagAddReq) (*types.TagAddResp, error) {
 	count, err := l.svcCtx.TagsModel.FindCount(l.ctx, countBuilder)
 	if err != nil {
 		l.Logger.Errorf("查询用户标签数量失败 userID : %d, err : %v", userID, err)
-		return nil, errcode.DBError.WithError(errors.Wrapf(err, "TagAdd FindCount userID : %d", userID)).Msgr("查询标签数量失败")
+		return errcode.DBError.WithError(errors.Wrapf(err, "TagAdd FindCount userID : %d", userID)).Msgr("查询标签数量失败")
 	}
 
 	if count >= 20 {
-		return nil, errcode.Fail.Msgr("自定义标签数量已达到上限(20个)")
+		return errcode.Fail.Msgr("自定义标签数量已达到上限(20个)")
 	}
 
 	now := time.Now().Unix()
@@ -70,8 +70,8 @@ func (l *TagAddLogic) TagAdd(req *types.TagAddReq) (*types.TagAddResp, error) {
 	_, err = l.svcCtx.TagsModel.Insert(l.ctx, tag)
 	if err != nil {
 		l.Logger.Errorf("添加标签失败 userID : %d, err : %v", userID, err)
-		return nil, errcode.DBError.WithError(errors.Wrapf(err, "TagAdd Insert userID : %d", userID)).Msgr("添加标签失败")
+		return errcode.DBError.WithError(errors.Wrapf(err, "TagAdd Insert userID : %d", userID)).Msgr("添加标签失败")
 	}
 
-	return nil, nil
+	return nil
 }
