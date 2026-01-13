@@ -22,8 +22,6 @@ type (
         Icon string `json:"icon,optional" valid:"icon"`          // 标签图标 最多10个字符
         Type string `json:"type" valid:"type"`                   // 标签类型 expense或income
     }
-    TagAddResp {
-    }
 )
 
 type (
@@ -35,15 +33,11 @@ type (
         Icon string `json:"icon,optional" valid:"icon"`          // 标签图标 最多10个字符
         Type string `json:"type,optional" valid:"type"`          // 标签类型 expense或income
     }
-    TagUpdateResp {
-    }
 )
 
 type (
     // 删除标签
     TagDeleteReq {
         TagId int64 `json:"tag_id" valid:"tag_id"`               // 标签ID
-    }
-    TagDeleteResp {
     }
 )

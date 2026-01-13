@@ -30,16 +30,16 @@ func NewUpdateUserSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *UpdateUserSettingsLogic) UpdateUserSettings(req *types.UpdateUserSettingsReq) (*types.UpdateUserSettingsResp, error) {
+func (l *UpdateUserSettingsLogic) UpdateUserSettings(req *types.UpdateUserSettingsReq) error {
 	userID := ctxData.GetUIDFromCtx(l.ctx)
 	if userID <= 0 {
-		return nil, errcode.Fail.Msgr("用户未登录")
+		return errcode.Fail.Msgr("用户未登录")
 	}
 
 	// 查找用户设置
 	userSettings, err := l.svcCtx.UserSettingModel.FindOneByUserId(l.ctx, cast.ToUint64(userID))
 	if err != nil && !errors.Is(err, model.ErrNotFound) {
-		return nil, errcode.DBError.WithError(errors.Wrapf(err, "UpdateUserSettings FindOneByUserId")).Msgr("获取用户设置失败")
+		return errcode.DBError.WithError(errors.Wrapf(err, "UpdateUserSettings FindOneByUserId")).Msgr("获取用户设置失败")
 	}
 
 	now := uint64(time.Now().Unix())
@@ -61,7 +61,7 @@ func (l *UpdateUserSettingsLogic) UpdateUserSettings(req *types.UpdateUserSettin
 
 		_, err = l.svcCtx.UserSettingModel.Insert(l.ctx, userSettings)
 		if err != nil {
-			return nil, errcode.DBError.WithError(errors.Wrapf(err, "UpdateUserSettings Insert")).Msgr("创建用户设置失败")
+			return errcode.DBError.WithError(errors.Wrapf(err, "UpdateUserSettings Insert")).Msgr("创建用户设置失败")
 		}
 	} else {
 		// 存在则更新
@@ -79,10 +79,10 @@ func (l *UpdateUserSettingsLogic) UpdateUserSettings(req *types.UpdateUserSettin
 			userSettings.UpdatedAt = now
 			err = l.svcCtx.UserSettingModel.Update(l.ctx, userSettings)
 			if err != nil {
-				return nil, errcode.DBError.WithError(errors.Wrapf(err, "UpdateUserSettings Update")).Msgr("更新用户设置失败")
+				return errcode.DBError.WithError(errors.Wrapf(err, "UpdateUserSettings Update")).Msgr("更新用户设置失败")
 			}
 		}
 	}
 
-	return &types.UpdateUserSettingsResp{}, nil
+	return nil
 }

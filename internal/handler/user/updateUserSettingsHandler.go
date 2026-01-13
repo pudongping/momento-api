@@ -28,7 +28,7 @@ func UpdateUserSettingsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := user.NewUpdateUserSettingsLogic(r.Context(), svcCtx)
-		resp, err := l.UpdateUserSettings(&req)
-		responses.ToResponse(r, w, resp, err)
+		err := l.UpdateUserSettings(&req)
+		responses.ToResponse(r, w, nil, err)
 	}
 }

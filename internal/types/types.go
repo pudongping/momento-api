@@ -27,14 +27,8 @@ type TagAddReq struct {
 	Type  string `json:"type" valid:"type"`            // 标签类型 expense或income
 }
 
-type TagAddResp struct {
-}
-
 type TagDeleteReq struct {
 	TagId int64 `json:"tag_id" valid:"tag_id"` // 标签ID
-}
-
-type TagDeleteResp struct {
 }
 
 type TagListReq struct {
@@ -60,18 +54,9 @@ type TagUpdateReq struct {
 	Type  string `json:"type,optional" valid:"type"`   // 标签类型 expense或income
 }
 
-type TagUpdateResp struct {
-}
-
 type UpdateUserSettingsReq struct {
 	BackgroundUrl string  `json:"background_url,optional" valid:"background_url"`
 	Budget        float64 `json:"budget,optional" valid:"budget"`
-}
-
-type UpdateUserSettingsResp struct {
-}
-
-type UserInfoReq struct {
 }
 
 type UserInfoResp struct {
@@ -84,15 +69,6 @@ type UserInfoResp struct {
 	IsDisable int    `json:"is_disable"`
 	CreatedAt int64  `json:"created_at"`
 	UpdatedAt int64  `json:"updated_at"`
-}
-
-type UserLogoutReq struct {
-}
-
-type UserLogoutResp struct {
-}
-
-type UserSettingsReq struct {
 }
 
 type UserSettingsResp struct {

@@ -1,8 +1,5 @@
 type (
     // 获取用户信息
-    UserInfoReq {
-
-    }
     UserInfoResp {
         UserId string `json:"user_id"`
         OpenId string `json:"openid"`
@@ -38,8 +35,6 @@ type (
 
 type (
     // 获取用户设置信息
-    UserSettingsReq {
-    }
     UserSettingsResp {
         UserSettingID int64 `json:"user_setting_id"`
         UserId string `json:"user_id"`
@@ -55,7 +50,5 @@ type (
     UpdateUserSettingsReq {
         BackgroundUrl string `json:"background_url,optional" valid:"background_url"`
         Budget float64 `json:"budget,optional" valid:"budget"`
-    }
-    UpdateUserSettingsResp {
     }
 )

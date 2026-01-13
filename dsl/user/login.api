@@ -16,11 +16,3 @@ type (
         UpdatedAt int64 `json:"updated_at"`
     }
 )
-
-type (
-    // 退出登录
-    UserLogoutReq {
-    }
-    UserLogoutResp {
-    }
-)

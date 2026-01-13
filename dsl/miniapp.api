@@ -33,11 +33,11 @@ service momentoapi {
 service momentoapi {
 	@doc "用户退出登录"
 	@handler userLogout
-	post /user/logout (UserLogoutReq) returns (UserLogoutResp)
+	post /user/logout
 
 	@doc "获取用户信息"
 	@handler userInfo
-	get /user/info (UserInfoReq) returns (UserInfoResp)
+	get /user/info returns (UserInfoResp)
 
 	@doc "更新用户信息"
 	@handler userUpdate
@@ -45,11 +45,11 @@ service momentoapi {
 
 	@doc "获取用户设置"
 	@handler userSettings
-	get /user/settings (UserSettingsReq) returns (UserSettingsResp)
+	get /user/settings returns (UserSettingsResp)
 
 	@doc "更新用户设置"
 	@handler updateUserSettings
-	put /user/settings (UpdateUserSettingsReq) returns (UpdateUserSettingsResp)
+	put /user/settings (UpdateUserSettingsReq)
 }
 
 @server (
@@ -65,14 +65,14 @@ service momentoapi {
 
 	@doc "添加自定义标签"
 	@handler tagAdd
-	post /tags/add (TagAddReq) returns (TagAddResp)
+	post /tags/add (TagAddReq)
 
 	@doc "更新自定义标签"
 	@handler tagUpdate
-	put /tags/update (TagUpdateReq) returns (TagUpdateResp)
+	put /tags/update (TagUpdateReq)
 
 	@doc "删除标签"
 	@handler tagDelete
-	delete /tags/delete (TagDeleteReq) returns (TagDeleteResp)
+	delete /tags/delete (TagDeleteReq)
 }
 
