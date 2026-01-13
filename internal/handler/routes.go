@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	festival "github.com/pudongping/momento-api/internal/handler/festival"
 	tag "github.com/pudongping/momento-api/internal/handler/tag"
 	user "github.com/pudongping/momento-api/internal/handler/user"
 	"github.com/pudongping/momento-api/internal/svc"
@@ -14,6 +15,45 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
+			[]rest.Route{
+				{
+					// 添加节日
+					Method:  http.MethodPost,
+					Path:    "/festivals/add",
+					Handler: festival.FestivalAddHandler(serverCtx),
+				},
+				{
+					// 删除节日
+					Method:  http.MethodDelete,
+					Path:    "/festivals/delete",
+					Handler: festival.FestivalDeleteHandler(serverCtx),
+				},
+				{
+					// 获取节日列表
+					Method:  http.MethodGet,
+					Path:    "/festivals/list",
+					Handler: festival.FestivalListHandler(serverCtx),
+				},
+				{
+					// 切换节日显示状态
+					Method:  http.MethodPut,
+					Path:    "/festivals/toggle",
+					Handler: festival.FestivalToggleHandler(serverCtx),
+				},
+				{
+					// 更新节日
+					Method:  http.MethodPut,
+					Path:    "/festivals/update",
+					Handler: festival.FestivalUpdateHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.JWTAuth.AccessSecret),
+	)
+
 	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthCheckMiddleware},

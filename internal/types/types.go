@@ -3,6 +3,50 @@
 
 package types
 
+type FestivalAddReq struct {
+	FestivalName string `json:"festival_name" valid:"festival_name"`        // 节日名称 1-10个字符
+	FestivalDate int64  `json:"festival_date" valid:"festival_date"`        // 节日日期 YYYYMMDD格式
+	IsShowHome   int32  `json:"is_show_home,optional" valid:"is_show_home"` // 是否显示 1-是 2-否 默认1
+}
+
+type FestivalAddResp struct {
+}
+
+type FestivalDeleteReq struct {
+	FestivalId int64 `json:"festival_id" valid:"festival_id"` // 节日ID
+}
+
+type FestivalDeleteResp struct {
+}
+
+type FestivalListResp struct {
+	FestivalId   int64  `json:"festival_id"`
+	UserId       string `json:"user_id"`
+	FestivalName string `json:"festival_name"`
+	FestivalDate int64  `json:"festival_date"`
+	IsShowHome   int32  `json:"is_show_home"`
+	CreatedAt    int64  `json:"created_at"`
+	UpdatedAt    int64  `json:"updated_at"`
+}
+
+type FestivalToggleReq struct {
+	FestivalId int64 `json:"festival_id" valid:"festival_id"`   // 节日ID
+	IsShowHome int32 `json:"is_show_home" valid:"is_show_home"` // 是否显示 1-是 2-否
+}
+
+type FestivalToggleResp struct {
+}
+
+type FestivalUpdateReq struct {
+	FestivalId   int64  `json:"festival_id" valid:"festival_id"`              // 节日ID
+	FestivalName string `json:"festival_name,optional" valid:"festival_name"` // 节日名称 1-10个字符
+	FestivalDate int64  `json:"festival_date,optional" valid:"festival_date"` // 节日日期 YYYYMMDD格式
+	IsShowHome   int32  `json:"is_show_home,optional" valid:"is_show_home"`   // 是否显示 1-是 2-否
+}
+
+type FestivalUpdateResp struct {
+}
+
 type LoginReq struct {
 	Code string `json:"code" valid:"code"`
 }

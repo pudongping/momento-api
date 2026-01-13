@@ -12,6 +12,7 @@ import (
 	"user/login.api"
 	"user/user.api"
 	"tag/tag.api"
+	"festival/festival.api"
 )
 
 @server (
@@ -74,5 +75,33 @@ service momentoapi {
 	@doc "删除标签"
 	@handler tagDelete
 	delete /tags/delete (TagDeleteReq)
+}
+
+@server (
+	group:      festival
+	tags:       "节日相关"
+	jwt:        JWTAuth
+	middleware: AuthCheckMiddleware
+)
+service momentoapi {
+	@doc "添加节日"
+	@handler festivalAdd
+	post /festivals/add (FestivalAddReq) returns (FestivalAddResp)
+
+	@doc "更新节日"
+	@handler festivalUpdate
+	put /festivals/update (FestivalUpdateReq) returns (FestivalUpdateResp)
+
+	@doc "删除节日"
+	@handler festivalDelete
+	delete /festivals/delete (FestivalDeleteReq) returns (FestivalDeleteResp)
+
+	@doc "切换节日显示状态"
+	@handler festivalToggle
+	put /festivals/toggle (FestivalToggleReq) returns (FestivalToggleResp)
+
+	@doc "获取节日列表"
+	@handler festivalList
+	get /festivals/list returns ([]FestivalListResp)
 }
 
