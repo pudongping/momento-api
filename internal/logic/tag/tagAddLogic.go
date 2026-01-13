@@ -52,6 +52,19 @@ func (l *TagAddLogic) TagAdd(req *types.TagAddReq) error {
 		return errcode.Fail.Msgr("自定义标签数量已达到上限(20个)")
 	}
 
+	// 检查是否存在同名的自定义标签
+	nameCheckBuilder := l.svcCtx.TagsModel.CountBuilder().
+		Where("user_id = ?", userIDUint).
+		Where("name = ?", req.Name).
+		Where("is_system = ?", model.TagsIsSystemNo)
+	nameCount, err := l.svcCtx.TagsModel.FindCount(l.ctx, nameCheckBuilder)
+	if err != nil {
+		return errcode.DBError.WithError(errors.Wrapf(err, "TagAdd FindCount by name userID : %d, name: %s", userID, req.Name)).Msgr("查询标签名称失败")
+	}
+	if nameCount > 0 {
+		return errcode.Fail.Msgr("标签名称已存在，请勿重复添加")
+	}
+
 	now := time.Now().Unix()
 
 	// 新增标签

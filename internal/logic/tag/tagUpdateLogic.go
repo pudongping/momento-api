@@ -59,6 +59,19 @@ func (l *TagUpdateLogic) TagUpdate(req *types.TagUpdateReq) error {
 	// 仅更新非空字段
 	updateMap := map[string]interface{}{}
 	if s := strings.TrimSpace(req.Name); s != "" {
+		// 检查是否存在同名的自定义标签
+		nameCheckBuilder := l.svcCtx.TagsModel.CountBuilder().
+			Where("user_id = ?", userIDUint).
+			Where("name = ?", s).
+			Where("is_system = ?", model.TagsIsSystemNo).
+			Where("tag_id != ?", req.TagId)
+		nameCount, err := l.svcCtx.TagsModel.FindCount(l.ctx, nameCheckBuilder)
+		if err != nil {
+			return errcode.DBError.WithError(errors.Wrapf(err, "TagUpdate FindCount by name userID : %d, name: %s", userID, s)).Msgr("查询标签名称失败")
+		}
+		if nameCount > 0 {
+			return errcode.Fail.Msgr("标签名称已存在，请更换标签名称")
+		}
 		updateMap["name"] = s
 	}
 	if s := strings.TrimSpace(req.Color); s != "" {
