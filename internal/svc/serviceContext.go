@@ -24,6 +24,7 @@ type ServiceContext struct {
 	TagsModel         model.TagsModel
 	FestivalsModel    model.FestivalsModel
 	TransactionsModel model.TransactionsModel
+	RecurringTransactionsModel model.RecurringTransactionsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -44,6 +45,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	tagsModel := model.NewTagsModel(mysqlConn)
 	festivalsModel := model.NewFestivalsModel(mysqlConn)
 	transactionsModel := model.NewTransactionsModel(mysqlConn)
+	recurringTransactionsModel := model.NewRecurringTransactionsModel(mysqlConn)
 
 	return &ServiceContext{
 		Config:      c,
@@ -57,5 +59,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TagsModel:         tagsModel,
 		FestivalsModel:    festivalsModel,
 		TransactionsModel: transactionsModel,
+		RecurringTransactionsModel: recurringTransactionsModel,
 	}
 }

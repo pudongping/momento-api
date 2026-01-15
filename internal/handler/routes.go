@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	festival "github.com/pudongping/momento-api/internal/handler/festival"
+	recurring "github.com/pudongping/momento-api/internal/handler/recurring"
 	tag "github.com/pudongping/momento-api/internal/handler/tag"
 	transaction "github.com/pudongping/momento-api/internal/handler/transaction"
 	user "github.com/pudongping/momento-api/internal/handler/user"
@@ -60,6 +61,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
 			[]rest.Route{
 				{
+					// 删除周期性记账规则
+					Method:  http.MethodDelete,
+					Path:    "/recurring/delete",
+					Handler: recurring.RecurringDeleteHandler(serverCtx),
+				},
+				{
+					// 获取周期性记账列表
+					Method:  http.MethodGet,
+					Path:    "/recurring/list",
+					Handler: recurring.RecurringListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.JWTAuth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
+			[]rest.Route{
+				{
 					// 添加自定义标签
 					Method:  http.MethodPost,
 					Path:    "/tags/add",
@@ -93,10 +115,34 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
 			[]rest.Route{
 				{
+					// 添加交易记录
+					Method:  http.MethodPost,
+					Path:    "/transactions/add",
+					Handler: transaction.TransactionAddHandler(serverCtx),
+				},
+				{
+					// 删除交易记录
+					Method:  http.MethodDelete,
+					Path:    "/transactions/delete",
+					Handler: transaction.TransactionDeleteHandler(serverCtx),
+				},
+				{
 					// 获取交易流水列表
 					Method:  http.MethodGet,
 					Path:    "/transactions/list",
 					Handler: transaction.TransactionListHandler(serverCtx),
+				},
+				{
+					// 获取交易统计
+					Method:  http.MethodGet,
+					Path:    "/transactions/stats",
+					Handler: transaction.TransactionStatsHandler(serverCtx),
+				},
+				{
+					// 更新交易记录
+					Method:  http.MethodPut,
+					Path:    "/transactions/update",
+					Handler: transaction.TransactionUpdateHandler(serverCtx),
 				},
 			}...,
 		),

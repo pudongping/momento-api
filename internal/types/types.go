@@ -64,6 +64,34 @@ type LoginResp struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+type RecurringDeleteReq struct {
+	RecurringId string `json:"recurring_id" valid:"recurring_id"` // 周期性记账规则 ID
+}
+
+type RecurringDeleteResp struct {
+}
+
+type RecurringItem struct {
+	RecurringId        string  `json:"recurring_id"`
+	Name               string  `json:"name"`
+	Type               string  `json:"type"`
+	Amount             float64 `json:"amount"`
+	RecurringType      string  `json:"recurring_type"`
+	RecurringDay       int64   `json:"recurring_day"`
+	RecurringHour      int64   `json:"recurring_hour"`
+	RecurringMinute    int64   `json:"recurring_minute"`
+	IsRecurringEnabled int64   `json:"is_recurring_enabled"` // 1-启用 2-禁用
+	NextExecutionTime  int64   `json:"next_execution_time"`  // (可选) 计算出的下一次执行时间
+}
+
+type RecurringListReq struct {
+	BookId int64 `json:"book_id" valid:"book_id"` // 账本 ID
+}
+
+type RecurringListResp struct {
+	List []RecurringItem `json:"list"`
+}
+
 type TagAddReq struct {
 	Name  string `json:"name" valid:"name"`            // 标签名称 1-6个字符
 	Color string `json:"color,optional" valid:"color"` // 标签颜色 如#E91E63
@@ -90,12 +118,48 @@ type TagListResp struct {
 	SortNum  int64  `json:"sort_num"`  // 排序序号
 }
 
+type TagStatItem struct {
+	TagId    int64   `json:"tag_id"`
+	TagName  string  `json:"tag_name"`
+	TagColor string  `json:"tag_color"`
+	TagIcon  string  `json:"tag_icon"`
+	Count    int64   `json:"count"`  // 笔数
+	Amount   float64 `json:"amount"` // 总金额
+}
+
 type TagUpdateReq struct {
 	TagId int64  `json:"tag_id" valid:"tag_id"`        // 标签ID
 	Name  string `json:"name,optional" valid:"name"`   // 标签名称 1-6个字符
 	Color string `json:"color,optional" valid:"color"` // 标签颜色 如#E91E63
 	Icon  string `json:"icon,optional" valid:"icon"`   // 标签图标 最多10个字符
 	Type  string `json:"type,optional" valid:"type"`   // 标签类型 expense或income
+}
+
+type TransactionAddReq struct {
+	BookId             int64   `json:"book_id" valid:"book_id"`                              // 账本 ID
+	Type               string  `json:"type" valid:"type"`                                    // 交易类型: expense (支出), income (收入)
+	Amount             float64 `json:"amount" valid:"amount"`                                // 金额
+	TagId              int64   `json:"tag_id" valid:"tag_id"`                                // 标签 ID
+	Remark             string  `json:"remark,optional" valid:"remark"`                       // 备注 (去除首尾空格)
+	CreatedAt          int64   `json:"created_at" valid:"created_at"`                        // 交易发生时间 (对应 DB transaction_time)
+	IsRecurringEnabled bool    `json:"is_recurring_enabled,optional"`                        // 模式开关，true 表示周期记账
+	Name               string  `json:"name,optional" valid:"name"`                           // 规则名称 (前端逻辑：remark || "周期{type}")
+	RecurringType      string  `json:"recurring_type,optional" valid:"recurring_type"`       // daily, weekly, monthly, quarterly, yearly
+	RecurringHour      int64   `json:"recurring_hour,optional" valid:"recurring_hour"`       // 执行小时 (0-23)
+	RecurringMinute    int64   `json:"recurring_minute,optional" valid:"recurring_minute"`   // 执行分钟 (0-59)
+	RecurringWeekday   int64   `json:"recurring_weekday,optional" valid:"recurring_weekday"` // Weekly必填: 0-6 (0为周日)
+	RecurringMonth     int64   `json:"recurring_month,optional" valid:"recurring_month"`     // Monthly必填: 1-12
+	RecurringDay       int64   `json:"recurring_day,optional" valid:"recurring_day"`         // Monthly必填: 1-31
+}
+
+type TransactionAddResp struct {
+}
+
+type TransactionDeleteReq struct {
+	TransactionId string `json:"transaction_id" valid:"transaction_id"` // 交易记录 ID
+}
+
+type TransactionDeleteResp struct {
 }
 
 type TransactionItem struct {
@@ -132,6 +196,33 @@ type TransactionListResp struct {
 	Total   int64             `json:"total"`
 	Page    int64             `json:"page"`
 	PerPage int64             `json:"per_page"`
+}
+
+type TransactionStatsReq struct {
+	BookId    int64  `json:"book_id" valid:"book_id"`    // 账本 ID
+	Type      string `json:"type,optional" valid:"type"` // 交易类型: expense (支出), income (收入)
+	TagId     int64  `json:"tag_id,optional"`            // 标签 ID
+	StartDate int64  `json:"start_date,optional"`        // 开始时间戳 (秒)
+	EndDate   int64  `json:"end_date,optional"`          // 结束时间戳 (秒)
+}
+
+type TransactionStatsResp struct {
+	TotalIncome  float64       `json:"total_income"`  // 总收入
+	TotalExpense float64       `json:"total_expense"` // 总支出
+	Balance      float64       `json:"balance"`       // 结余
+	TagStats     []TagStatItem `json:"tag_stats"`     // 标签统计
+}
+
+type TransactionUpdateReq struct {
+	TransactionId string  `json:"transaction_id" valid:"transaction_id"`  // 交易记录 ID
+	Type          string  `json:"type,optional" valid:"type"`             // 交易类型: expense (支出), income (收入)
+	Amount        float64 `json:"amount,optional" valid:"amount"`         // 金额
+	TagId         int64   `json:"tag_id,optional" valid:"tag_id"`         // 标签 ID
+	Remark        string  `json:"remark,optional" valid:"remark"`         // 备注 (去除首尾空格)
+	CreatedAt     int64   `json:"created_at,optional" valid:"created_at"` // 交易时间 (对应 DB transaction_time)
+}
+
+type TransactionUpdateResp struct {
 }
 
 type UpdateUserSettingsReq struct {

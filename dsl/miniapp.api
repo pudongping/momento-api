@@ -14,6 +14,7 @@ import (
 	"tag/tag.api"
 	"festival/festival.api"
 	"transaction/transaction.api"
+	"recurring/recurring.api"
 )
 
 @server (
@@ -116,5 +117,37 @@ service momentoapi {
 	@doc "获取交易流水列表"
 	@handler transactionList
 	get /transactions/list (TransactionListReq) returns (TransactionListResp)
+
+	@doc "添加交易记录"
+	@handler transactionAdd
+	post /transactions/add (TransactionAddReq) returns (TransactionAddResp)
+
+	@doc "更新交易记录"
+	@handler transactionUpdate
+	put /transactions/update (TransactionUpdateReq) returns (TransactionUpdateResp)
+
+	@doc "删除交易记录"
+	@handler transactionDelete
+	delete /transactions/delete (TransactionDeleteReq) returns (TransactionDeleteResp)
+
+	@doc "获取交易统计"
+	@handler transactionStats
+	get /transactions/stats (TransactionStatsReq) returns (TransactionStatsResp)
+}
+
+@server (
+	group:      recurring
+	tags:       "周期性记账相关"
+	jwt:        JWTAuth
+	middleware: AuthCheckMiddleware
+)
+service momentoapi {
+	@doc "获取周期性记账列表"
+	@handler recurringList
+	get /recurring/list (RecurringListReq) returns (RecurringListResp)
+
+	@doc "删除周期性记账规则"
+	@handler recurringDelete
+	delete /recurring/delete (RecurringDeleteReq) returns (RecurringDeleteResp)
 }
 
