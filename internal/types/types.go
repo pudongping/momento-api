@@ -3,6 +3,19 @@
 
 package types
 
+type AccountBookListReq struct {
+}
+
+type AccountBookListResp struct {
+	BookId        int64  `json:"book_id"`
+	Name          string `json:"name"`
+	CreatorUserId string `json:"creator_user_id"`
+	IsCreator     int64  `json:"is_creator"`   // 1-是创建者 2-不是
+	IsDefault     int64  `json:"is_default"`   // 1-是默认账本 2-不是
+	MemberCount   int64  `json:"member_count"` // 成员数量
+	CreatedAt     int64  `json:"created_at"`
+}
+
 type FestivalAddReq struct {
 	FestivalName string `json:"festival_name" valid:"festival_name"`        // 节日名称 1-10个字符
 	FestivalDate int64  `json:"festival_date" valid:"festival_date"`        // 节日日期 YYYYMMDD格式

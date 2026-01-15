@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	accountBook "github.com/pudongping/momento-api/internal/handler/accountBook"
 	festival "github.com/pudongping/momento-api/internal/handler/festival"
 	recurring "github.com/pudongping/momento-api/internal/handler/recurring"
 	tag "github.com/pudongping/momento-api/internal/handler/tag"
@@ -17,6 +18,21 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
+			[]rest.Route{
+				{
+					// 获取账本列表
+					Method:  http.MethodGet,
+					Path:    "/accountBooks/list",
+					Handler: accountBook.AccountBookListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.JWTAuth.AccessSecret),
+	)
+
 	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthCheckMiddleware},

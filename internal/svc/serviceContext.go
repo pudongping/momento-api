@@ -19,12 +19,14 @@ type ServiceContext struct {
 
 	AuthCheckMiddleware rest.Middleware
 
-	UserModel         model.UsersModel
-	UserSettingModel  model.UserSettingsModel
-	TagsModel         model.TagsModel
-	FestivalsModel    model.FestivalsModel
-	TransactionsModel model.TransactionsModel
+	UserModel                  model.UsersModel
+	UserSettingModel           model.UserSettingsModel
+	TagsModel                  model.TagsModel
+	FestivalsModel             model.FestivalsModel
+	TransactionsModel          model.TransactionsModel
 	RecurringTransactionsModel model.RecurringTransactionsModel
+	AccountBooksModel          model.AccountBooksModel
+	AccountBookMembersModel    model.AccountBookMembersModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -46,6 +48,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	festivalsModel := model.NewFestivalsModel(mysqlConn)
 	transactionsModel := model.NewTransactionsModel(mysqlConn)
 	recurringTransactionsModel := model.NewRecurringTransactionsModel(mysqlConn)
+	accountBooksModel := model.NewAccountBooksModel(mysqlConn)
+	accountBookMembersModel := model.NewAccountBookMembersModel(mysqlConn)
 
 	return &ServiceContext{
 		Config:      c,
@@ -54,11 +58,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		AuthCheckMiddleware: middleware.NewAuthCheckMiddleware(userModel, redisClient).Handle,
 
-		UserModel:         userModel,
-		UserSettingModel:  userSettingModel,
-		TagsModel:         tagsModel,
-		FestivalsModel:    festivalsModel,
-		TransactionsModel: transactionsModel,
+		UserModel:                  userModel,
+		UserSettingModel:           userSettingModel,
+		TagsModel:                  tagsModel,
+		FestivalsModel:             festivalsModel,
+		TransactionsModel:          transactionsModel,
 		RecurringTransactionsModel: recurringTransactionsModel,
+		AccountBooksModel:          accountBooksModel,
+		AccountBookMembersModel:    accountBookMembersModel,
 	}
 }
