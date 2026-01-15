@@ -19,10 +19,11 @@ type ServiceContext struct {
 
 	AuthCheckMiddleware rest.Middleware
 
-	UserModel        model.UsersModel
-	UserSettingModel model.UserSettingsModel
-	TagsModel        model.TagsModel
-	FestivalsModel   model.FestivalsModel
+	UserModel         model.UsersModel
+	UserSettingModel  model.UserSettingsModel
+	TagsModel         model.TagsModel
+	FestivalsModel    model.FestivalsModel
+	TransactionsModel model.TransactionsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -42,6 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	userSettingModel := model.NewUserSettingsModel(mysqlConn)
 	tagsModel := model.NewTagsModel(mysqlConn)
 	festivalsModel := model.NewFestivalsModel(mysqlConn)
+	transactionsModel := model.NewTransactionsModel(mysqlConn)
 
 	return &ServiceContext{
 		Config:      c,
@@ -50,9 +52,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		AuthCheckMiddleware: middleware.NewAuthCheckMiddleware(userModel, redisClient).Handle,
 
-		UserModel:        userModel,
-		UserSettingModel: userSettingModel,
-		TagsModel:        tagsModel,
-		FestivalsModel:   festivalsModel,
+		UserModel:         userModel,
+		UserSettingModel:  userSettingModel,
+		TagsModel:         tagsModel,
+		FestivalsModel:    festivalsModel,
+		TransactionsModel: transactionsModel,
 	}
 }

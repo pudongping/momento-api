@@ -8,6 +8,7 @@ import (
 
 	festival "github.com/pudongping/momento-api/internal/handler/festival"
 	tag "github.com/pudongping/momento-api/internal/handler/tag"
+	transaction "github.com/pudongping/momento-api/internal/handler/transaction"
 	user "github.com/pudongping/momento-api/internal/handler/user"
 	"github.com/pudongping/momento-api/internal/svc"
 
@@ -81,6 +82,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPut,
 					Path:    "/tags/update",
 					Handler: tag.TagUpdateHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.JWTAuth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
+			[]rest.Route{
+				{
+					// 获取交易流水列表
+					Method:  http.MethodGet,
+					Path:    "/transactions/list",
+					Handler: transaction.TransactionListHandler(serverCtx),
 				},
 			}...,
 		),

@@ -20,16 +20,21 @@
 
 ## 2. 文件结构
 
-- **无需头部 info**: 单个业务模块的 `.api` 文件（如 `dsl/tag/tag.api`）不需要包含 `syntax = "v1"` 和 `info` 块（这些通常在主入口 api 文件中定义，或者如果当前文件被 import，则尽量保持简洁，仅保留 `type` 定义）。
+- **纯类型定义**: 单个业务模块的 `.api` 文件（如 `dsl/tag/tag.api`）**仅允许包含结构体定义 (`type` 块)**。
+- **禁止服务定义**: 严禁在业务模块的 `.api` 文件中编写 `service` 或 `@server` 块。
+- **无需头部 info**: 不需要包含 `syntax = "v1"` 和 `info` 块。
 
-## 3. 服务定义 (Service) - 如果包含
+## 3. 服务与路由注册 (Service & Route Registration)
 
-- **注解**: 必须包含 `@doc` 和 `@handler`。
-- **Doc**: 简明扼要地描述接口功能。
-- **Handler**: 命名遵循 `小驼峰` (e.g., `tagList`)。
-- **路由**: 使用全小写，单词间用 `/` 分隔 (e.g., `/tags/list`)。
+- **集中管理**: 所有 `@server` 和 `service` 定义必须统一编写在主入口文件 `dsl/miniapp.api` 中。
+- **架构考量**: 这种约束确保了路由配置、中间件引用（如 `AuthCheckMiddleware`）和分组逻辑（`group`）的集中化管理，便于维护和全局视图的统一。
+- **编写规范**:
+  - **注解**: 必须包含 `@doc` 和 `@handler`。
+  - **Doc**: 简明扼要地描述接口功能。
+  - **Handler**: 命名遵循 `小驼峰` (e.g., `tagList`)。
+  - **路由**: 使用全小写，单词间用 `/` 分隔 (e.g., `/tags/list`)。
 
-## 4. 示例模版
+## 4. 示例模版 (业务模块文件)
 
 ```go
 type (
@@ -45,17 +50,7 @@ type (
         Status int64 `json:"status"` // 1-正常 2-禁用
     }
 )
-
-// 如果该文件包含 service 定义
-// @server(
-//     group: example
-//     prefix: /api/v1
-// )
-// service momento-api {
-//     @doc "获取示例列表"
-//     @handler exampleList
-//     get /example/list (ExampleListReq) returns (ExampleListResp)
-// }
+// 注意：service 定义请移步至 dsl/miniapp.api 文件中添加
 ```
 
 ## 5. 关键差异点总结 (对比默认 goctl)

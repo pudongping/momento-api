@@ -13,6 +13,7 @@ import (
 	"user/user.api"
 	"tag/tag.api"
 	"festival/festival.api"
+	"transaction/transaction.api"
 )
 
 @server (
@@ -103,5 +104,17 @@ service momentoapi {
 	@doc "获取节日列表"
 	@handler festivalList
 	get /festivals/list returns ([]FestivalListResp)
+}
+
+@server (
+	group:      transaction
+	tags:       "交易相关"
+	jwt:        JWTAuth
+	middleware: AuthCheckMiddleware
+)
+service momentoapi {
+	@doc "获取交易流水列表"
+	@handler transactionList
+	get /transactions/list (TransactionListReq) returns (TransactionListResp)
 }
 
