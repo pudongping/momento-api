@@ -14,7 +14,7 @@ func TransactionListRequestCheck(data interface{}) map[string][]string {
 		"end_date":            []string{"numeric"},
 		"page":                []string{"numeric_between:1,"},
 		"per_page":            []string{"numeric_between:1,"},
-		"last_transaction_id": []string{"numeric"},
+		"last_transaction_id": []string{"required", "numeric_between:0,"},
 	}
 
 	messages := govalidator.MapData{
@@ -41,7 +41,8 @@ func TransactionListRequestCheck(data interface{}) map[string][]string {
 			"numeric_between:每页数量必须为数字并且大于等于 1",
 		},
 		"last_transaction_id": []string{
-			"numeric:LastTransactionId 必须为数字",
+			"required:LastTransactionId 为必填项",
+			"numeric_between:LastTransactionId 必须为数字并且大于等于 0",
 		},
 	}
 

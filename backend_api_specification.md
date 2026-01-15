@@ -42,7 +42,7 @@
 | `end_date` | Integer | 否 | 结束时间戳 (秒) |
 | `page` | Integer | 否 | 页码，默认 1 |
 | `per_page` | Integer | 否 | 每页数量，默认 20 |
-| `last_transaction_id` | Integer | 否 | 上一页最后一条记录 ID (用于游标分页优化，可选) |
+| `last_transaction_id` | Integer | 否 | 上一页最后一条记录 ID (用于游标分页优化，必填) |
 
 - **响应数据 (data)**:
     ```json
