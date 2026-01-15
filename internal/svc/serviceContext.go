@@ -27,6 +27,7 @@ type ServiceContext struct {
 	RecurringTransactionsModel model.RecurringTransactionsModel
 	AccountBooksModel          model.AccountBooksModel
 	AccountBookMembersModel    model.AccountBookMembersModel
+	AccountBookInvitationsModel model.AccountBookInvitationsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -50,6 +51,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	recurringTransactionsModel := model.NewRecurringTransactionsModel(mysqlConn)
 	accountBooksModel := model.NewAccountBooksModel(mysqlConn)
 	accountBookMembersModel := model.NewAccountBookMembersModel(mysqlConn)
+	accountBookInvitationsModel := model.NewAccountBookInvitationsModel(mysqlConn)
 
 	return &ServiceContext{
 		Config:      c,
@@ -66,5 +68,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RecurringTransactionsModel: recurringTransactionsModel,
 		AccountBooksModel:          accountBooksModel,
 		AccountBookMembersModel:    accountBookMembersModel,
+		AccountBookInvitationsModel: accountBookInvitationsModel,
 	}
 }
