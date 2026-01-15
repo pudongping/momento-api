@@ -6,7 +6,6 @@ package festival
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
@@ -58,11 +57,9 @@ func (l *FestivalListLogic) FestivalList() (resp []types.FestivalListResp, err e
 	resp = make([]types.FestivalListResp, 0, len(festivals))
 	for _, festival := range festivals {
 		var item types.FestivalListResp
-		if err = copier.Copy(&item, festival); err != nil {
-			return nil, errors.Wrap(err, "FestivalList copier")
-		}
-		item.UserId = cast.ToString(festival.UserId)
 		item.FestivalId = cast.ToInt64(festival.FestivalId)
+		item.UserId = cast.ToString(festival.UserId)
+		item.FestivalName = festival.FestivalName
 		item.FestivalDate = cast.ToInt64(festival.FestivalDate)
 		item.IsShowHome = cast.ToInt32(festival.IsShowHome)
 		item.CreatedAt = cast.ToInt64(festival.CreatedAt)

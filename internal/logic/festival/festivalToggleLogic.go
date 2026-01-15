@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
+	"github.com/pudongping/momento-api/internal/service"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/internal/types"
 	"github.com/spf13/cast"
@@ -38,7 +39,7 @@ func (l *FestivalToggleLogic) FestivalToggle(req *types.FestivalToggleReq) (*typ
 	userIDUint := cast.ToUint64(userID)
 
 	// 查询节日是否存在并检查权限
-	svc := NewFestivalService(l.ctx, l.svcCtx)
+	svc := service.NewFestivalService(l.ctx, l.svcCtx)
 	_, err := svc.CheckFestivalOwnership(userIDUint, req.FestivalId, "修改")
 	if err != nil {
 		return nil, err

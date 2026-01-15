@@ -6,10 +6,10 @@ package festival
 import (
 	"context"
 
-	"github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
+	"github.com/pudongping/momento-api/internal/service"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/internal/types"
 	"github.com/spf13/cast"
@@ -37,15 +37,14 @@ func (l *FestivalDeleteLogic) FestivalDelete(req *types.FestivalDeleteReq) (*typ
 	userIDUint := cast.ToUint64(userID)
 
 	// 查询节日是否存在并检查权限
-	svc := NewFestivalService(l.ctx, l.svcCtx)
+	svc := service.NewFestivalService(l.ctx, l.svcCtx)
 	_, err := svc.CheckFestivalOwnership(userIDUint, req.FestivalId, "删除")
 	if err != nil {
 		return nil, err
 	}
 
 	// 删除节日
-	where := squirrel.Eq{"festival_id": cast.ToUint64(req.FestivalId)}
-	if _, err := l.svcCtx.FestivalsModel.DeleteFilter(l.ctx, nil, where); err != nil {
+	if err := l.svcCtx.FestivalsModel.Delete(l.ctx, cast.ToUint64(req.FestivalId)); err != nil {
 		l.Logger.Errorf("删除节日失败 userID : %d, festivalID : %d, err : %v", userID, req.FestivalId, err)
 		return nil, errcode.DBError.WithError(errors.Wrapf(err, "FestivalDelete DeleteFilter festivalID : %d", req.FestivalId)).Msgr("删除节日失败")
 	}

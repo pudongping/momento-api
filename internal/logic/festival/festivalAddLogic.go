@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
+	"github.com/pudongping/momento-api/internal/service"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/internal/types"
 	"github.com/pudongping/momento-api/model"
@@ -66,14 +67,14 @@ func (l *FestivalAddLogic) FestivalAdd(req *types.FestivalAddReq) (*types.Festiv
 	}
 
 	// 检查节日日期是否为未来日期
-	svc := NewFestivalService(l.ctx, l.svcCtx)
+	svc := service.NewFestivalService(l.ctx, l.svcCtx)
 	if !svc.IsValidAndFutureFestivalDate(req.FestivalDate) {
 		return nil, errcode.Fail.Msgr("节日日期必须是未来的日期")
 	}
 
 	isShowHome := req.IsShowHome
 	if isShowHome == 0 {
-		isShowHome = 1 // 默认为1-是
+		isShowHome = model.FestivalIsShowHomeYes // 默认为1-是
 	}
 
 	now := time.Now().Unix()
