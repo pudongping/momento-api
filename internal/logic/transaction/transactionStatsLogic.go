@@ -35,37 +35,15 @@ func (l *TransactionStatsLogic) TransactionStats(req *types.TransactionStatsReq)
 	baseWhere := l.buildBaseQuery(userID, req)
 
 	// 2. 计算总收入
-	var totalIncome float64
-	// 如果筛选条件指定了 type=expense，则收入为 0；否则计算收入
-	if req.Type == "" || req.Type == "income" {
-		incomeWhere := baseWhere
-		if req.Type == "" {
-			incomeWhere = append(incomeWhere, squirrel.Eq{"type": "income"})
-		}
-		// 如果 req.Type == "income"，baseWhere 已经包含了 type=income 条件
-		sumBuilder := l.svcCtx.TransactionsModel.SumBuilder("amount").Where(incomeWhere)
-		totalIncome, err = l.svcCtx.TransactionsModel.FindSum(l.ctx, sumBuilder)
-		if err != nil {
-			l.Logger.Errorf("TransactionStats FindSum Income error: %v", err)
-			return nil, errcode.DBError.Msgr("统计收入失败")
-		}
+	totalIncome, err := l.calculateTotalIncome(req, baseWhere)
+	if err != nil {
+		return nil, err
 	}
 
 	// 3. 计算总支出
-	var totalExpense float64
-	// 如果筛选条件指定了 type=income，则支出为 0；否则计算支出
-	if req.Type == "" || req.Type == "expense" {
-		expenseWhere := baseWhere
-		if req.Type == "" {
-			expenseWhere = append(expenseWhere, squirrel.Eq{"type": "expense"})
-		}
-		// 如果 req.Type == "expense"，baseWhere 已经包含了 type=expense 条件
-		sumBuilder := l.svcCtx.TransactionsModel.SumBuilder("amount").Where(expenseWhere)
-		totalExpense, err = l.svcCtx.TransactionsModel.FindSum(l.ctx, sumBuilder)
-		if err != nil {
-			l.Logger.Errorf("TransactionStats FindSum Expense error: %v", err)
-			return nil, errcode.DBError.Msgr("统计支出失败")
-		}
+	totalExpense, err := l.calculateTotalExpense(req, baseWhere)
+	if err != nil {
+		return nil, err
 	}
 
 	// 4. 计算结余
@@ -84,6 +62,56 @@ func (l *TransactionStatsLogic) TransactionStats(req *types.TransactionStatsReq)
 		Balance:      balance,
 		TagStats:     tagStats,
 	}, nil
+}
+
+// calculateTotalIncome 计算总收入
+func (l *TransactionStatsLogic) calculateTotalIncome(req *types.TransactionStatsReq, baseWhere squirrel.And) (float64, error) {
+	// 如果筛选条件指定了 type=expense，则收入为 0
+	if req.Type == "expense" {
+		return 0, nil
+	}
+
+	// 复制 baseWhere 防止修改原切片
+	incomeWhere := make(squirrel.And, len(baseWhere))
+	copy(incomeWhere, baseWhere)
+
+	// 如果没有指定 type，则限定为 income
+	if req.Type == "" {
+		incomeWhere = append(incomeWhere, squirrel.Eq{"type": "income"})
+	}
+
+	sumBuilder := l.svcCtx.TransactionsModel.SumBuilder("amount").Where(incomeWhere)
+	totalIncome, err := l.svcCtx.TransactionsModel.FindSum(l.ctx, sumBuilder)
+	if err != nil {
+		l.Logger.Errorf("TransactionStats FindSum Income error: %v", err)
+		return 0, errcode.DBError.Msgr("统计收入失败")
+	}
+	return totalIncome, nil
+}
+
+// calculateTotalExpense 计算总支出
+func (l *TransactionStatsLogic) calculateTotalExpense(req *types.TransactionStatsReq, baseWhere squirrel.And) (float64, error) {
+	// 如果筛选条件指定了 type=income，则支出为 0
+	if req.Type == "income" {
+		return 0, nil
+	}
+
+	// 复制 baseWhere 防止修改原切片
+	expenseWhere := make(squirrel.And, len(baseWhere))
+	copy(expenseWhere, baseWhere)
+
+	// 如果没有指定 type，则限定为 expense
+	if req.Type == "" {
+		expenseWhere = append(expenseWhere, squirrel.Eq{"type": "expense"})
+	}
+
+	sumBuilder := l.svcCtx.TransactionsModel.SumBuilder("amount").Where(expenseWhere)
+	totalExpense, err := l.svcCtx.TransactionsModel.FindSum(l.ctx, sumBuilder)
+	if err != nil {
+		l.Logger.Errorf("TransactionStats FindSum Expense error: %v", err)
+		return 0, errcode.DBError.Msgr("统计支出失败")
+	}
+	return totalExpense, nil
 }
 
 // buildBaseQuery 构建通用的过滤条件
@@ -115,8 +143,35 @@ type TagStatDbResult struct {
 	Amount float64 `db:"amount"`
 }
 
+// TagInfo 内部使用的标签信息结构
+type TagInfo struct {
+	Name  string
+	Color string
+	Icon  string
+}
+
+// calculateTagStats 计算各标签占比
 func (l *TransactionStatsLogic) calculateTagStats(where squirrel.Sqlizer) ([]types.TagStatItem, error) {
-	// 构建分组查询
+	// 1. 获取原始统计数据
+	rawStats, err := l.getRawTagStats(where)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rawStats) == 0 {
+		return []types.TagStatItem{}, nil
+	}
+
+	// 2. 获取标签详情
+	tagIDs := l.extractTagIDs(rawStats)
+	tagMap := l.getTagsMap(tagIDs)
+
+	// 3. 组装结果
+	return l.buildTagStatItems(rawStats, tagMap), nil
+}
+
+// getRawTagStats 从数据库获取原始统计数据
+func (l *TransactionStatsLogic) getRawTagStats(where squirrel.Sqlizer) ([]TagStatDbResult, error) {
 	// SELECT tag_id, COUNT(*) as count, SUM(amount) as amount FROM transactions WHERE ... GROUP BY tag_id ORDER BY amount DESC
 	builder := l.svcCtx.TransactionsModel.SelectBuilder("tag_id", "COUNT(*) as count", "SUM(amount) as amount").
 		Where(where).
@@ -128,47 +183,47 @@ func (l *TransactionStatsLogic) calculateTagStats(where squirrel.Sqlizer) ([]typ
 	if err != nil {
 		return nil, err
 	}
+	return results, nil
+}
 
-	if len(results) == 0 {
-		return []types.TagStatItem{}, nil
-	}
-
-	// 获取标签详情
-	tagIDs := make([]uint64, 0, len(results))
-	for _, r := range results {
+// extractTagIDs 提取标签ID
+func (l *TransactionStatsLogic) extractTagIDs(rawStats []TagStatDbResult) []uint64 {
+	tagIDs := make([]uint64, 0, len(rawStats))
+	for _, r := range rawStats {
 		tagIDs = append(tagIDs, r.TagId)
 	}
+	return tagIDs
+}
 
-	tagMap := make(map[uint64]struct {
-		Name  string
-		Color string
-		Icon  string
-	})
-
-	if len(tagIDs) > 0 {
-		tagBuilder := l.svcCtx.TagsModel.SelectBuilder().Where(squirrel.Eq{"tag_id": tagIDs})
-		tags, err := l.svcCtx.TagsModel.FindAll(l.ctx, tagBuilder)
-		if err == nil {
-			for _, t := range tags {
-				tagMap[t.TagId] = struct {
-					Name  string
-					Color string
-					Icon  string
-				}{
-					Name:  t.Name,
-					Color: t.Color,
-					Icon:  t.Icon,
-				}
-			}
-		} else {
-			// 记录日志但不中断，允许返回无标签详情的数据
-			l.Logger.Errorf("TransactionStats FindAll Tags error: %v", err)
-		}
+// getTagsMap 获取标签映射信息
+func (l *TransactionStatsLogic) getTagsMap(tagIDs []uint64) map[uint64]TagInfo {
+	tagMap := make(map[uint64]TagInfo)
+	if len(tagIDs) == 0 {
+		return tagMap
 	}
 
-	// 组装结果
-	respStats := make([]types.TagStatItem, 0, len(results))
-	for _, r := range results {
+	tagBuilder := l.svcCtx.TagsModel.SelectBuilder().Where(squirrel.Eq{"tag_id": tagIDs})
+	tags, err := l.svcCtx.TagsModel.FindAll(l.ctx, tagBuilder)
+	if err != nil {
+		// 记录日志但不中断，允许返回无标签详情的数据
+		l.Logger.Errorf("TransactionStats FindAll Tags error: %v", err)
+		return tagMap
+	}
+
+	for _, t := range tags {
+		tagMap[t.TagId] = TagInfo{
+			Name:  t.Name,
+			Color: t.Color,
+			Icon:  t.Icon,
+		}
+	}
+	return tagMap
+}
+
+// buildTagStatItems 组装最终结果
+func (l *TransactionStatsLogic) buildTagStatItems(rawStats []TagStatDbResult, tagMap map[uint64]TagInfo) []types.TagStatItem {
+	respStats := make([]types.TagStatItem, 0, len(rawStats))
+	for _, r := range rawStats {
 		item := types.TagStatItem{
 			TagId:  int64(r.TagId),
 			Count:  r.Count,
@@ -186,6 +241,5 @@ func (l *TransactionStatsLogic) calculateTagStats(where squirrel.Sqlizer) ([]typ
 
 		respStats = append(respStats, item)
 	}
-
-	return respStats, nil
+	return respStats
 }

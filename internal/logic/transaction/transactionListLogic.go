@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/jinzhu/copier"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
 	"github.com/pudongping/momento-api/coreKit/paginator"
@@ -178,8 +177,6 @@ func (l *TransactionListLogic) assembleTransactionItems(list []*model.Transactio
 
 	for _, item := range list {
 		tItem := types.TransactionItem{}
-		// 基础字段拷贝
-		_ = copier.Copy(&tItem, item)
 
 		// 手动处理 ID 和 类型不匹配字段
 		tItem.TransactionId = cast.ToString(item.TransactionId)

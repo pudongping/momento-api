@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/jinzhu/copier"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
 	"github.com/pudongping/momento-api/internal/svc"
@@ -46,7 +45,6 @@ func (l *RecurringListLogic) RecurringList(req *types.RecurringListReq) (resp *t
 	respList := make([]types.RecurringItem, 0, len(list))
 	for _, item := range list {
 		rItem := types.RecurringItem{}
-		_ = copier.Copy(&rItem, item)
 
 		// 手动转换字段
 		rItem.RecurringId = cast.ToString(item.RecurringId)
@@ -58,8 +56,6 @@ func (l *RecurringListLogic) RecurringList(req *types.RecurringListReq) (resp *t
 		rItem.RecurringHour = cast.ToInt64(item.RecurringHour)
 		rItem.RecurringMinute = cast.ToInt64(item.RecurringMinute)
 		rItem.IsRecurringEnabled = item.IsRecurringEnabled
-		// NextExecutionTime 需要业务逻辑计算，这里暂时忽略或设为0，或者如果需要可以添加计算逻辑
-		// spec 提到是可选的，这里暂不计算
 
 		respList = append(respList, rItem)
 	}
