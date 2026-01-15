@@ -3,6 +3,26 @@
 
 package types
 
+type AccountBookAddReq struct {
+	Name string `json:"name" valid:"name"` // 账本名称
+}
+
+type AccountBookAddResp struct {
+	BookId        int64  `json:"book_id"`
+	Name          string `json:"name"`
+	CreatorUserId string `json:"creator_user_id"`
+	MemberCount   int64  `json:"member_count"`
+	CreatedAt     int64  `json:"created_at"`
+	UpdatedAt     int64  `json:"updated_at"`
+}
+
+type AccountBookDeleteReq struct {
+	BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+}
+
+type AccountBookDeleteResp struct {
+}
+
 type AccountBookListReq struct {
 }
 

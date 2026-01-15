@@ -1,15 +1,38 @@
 type (
-	// 账本列表
-	AccountBookListReq {
+    // 账本列表
+    AccountBookListReq {
+    }
+    AccountBookListResp {
+        BookId int64 `json:"book_id"`
+        Name string `json:"name"`
+        CreatorUserId string `json:"creator_user_id"`
+        IsCreator int64 `json:"is_creator"`     // 1-是创建者 2-不是
+        IsDefault int64 `json:"is_default"`     // 1-是默认账本 2-不是
+        MemberCount int64 `json:"member_count"` // 成员数量
+        CreatedAt int64 `json:"created_at"`
+    }
+)
 
-	}
-	AccountBookListResp {
-		BookId        int64  `json:"book_id"`
-		Name          string `json:"name"`
-		CreatorUserId string `json:"creator_user_id"`
-		IsCreator     int64  `json:"is_creator"`   // 1-是创建者 2-不是
-		IsDefault     int64  `json:"is_default"`   // 1-是默认账本 2-不是
-		MemberCount   int64  `json:"member_count"` // 成员数量
-		CreatedAt     int64  `json:"created_at"`
-	}
+type (
+    // 创建账本
+    AccountBookAddReq {
+        Name string `json:"name" valid:"name"` // 账本名称
+    }
+    AccountBookAddResp {
+        BookId int64 `json:"book_id"`
+        Name string `json:"name"`
+        CreatorUserId string `json:"creator_user_id"`
+        MemberCount int64 `json:"member_count"`
+        CreatedAt int64 `json:"created_at"`
+        UpdatedAt int64 `json:"updated_at"`
+    }
+)
+
+type (
+    // 删除账本
+    AccountBookDeleteReq {
+        BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+    }
+    AccountBookDeleteResp {
+    }
 )

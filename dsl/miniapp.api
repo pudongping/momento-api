@@ -162,5 +162,13 @@ service momentoapi {
 	@doc "获取账本列表"
 	@handler accountBookList
 	get /accountBooks/list (AccountBookListReq) returns ([]AccountBookListResp)
+
+	@doc "创建账本"
+	@handler accountBookAdd
+	post /accountBooks/create (AccountBookAddReq) returns (AccountBookAddResp)
+
+	@doc "删除账本"
+	@handler accountBookDelete
+	delete /accountBooks/delete (AccountBookDeleteReq) returns (AccountBookDeleteResp)
 }
 

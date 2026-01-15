@@ -23,6 +23,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
 			[]rest.Route{
 				{
+					// 创建账本
+					Method:  http.MethodPost,
+					Path:    "/accountBooks/create",
+					Handler: accountBook.AccountBookAddHandler(serverCtx),
+				},
+				{
+					// 删除账本
+					Method:  http.MethodDelete,
+					Path:    "/accountBooks/delete",
+					Handler: accountBook.AccountBookDeleteHandler(serverCtx),
+				},
+				{
 					// 获取账本列表
 					Method:  http.MethodGet,
 					Path:    "/accountBooks/list",
