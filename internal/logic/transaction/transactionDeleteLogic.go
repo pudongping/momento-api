@@ -28,7 +28,7 @@ func NewTransactionDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *TransactionDeleteLogic) TransactionDelete(req *types.TransactionDeleteReq) error {
+func (l *TransactionDeleteLogic) TransactionDelete(req *types.TransactionDeleteReq) (*types.TransactionDeleteResp, error) {
 	// 获取当前登录用户 ID
 	userID := ctxData.GetUIDFromCtx(l.ctx)
 
@@ -37,22 +37,22 @@ func (l *TransactionDeleteLogic) TransactionDelete(req *types.TransactionDeleteR
 	transactionData, err := l.svcCtx.TransactionsModel.FindOne(l.ctx, transactionId)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return errcode.NotFound.Msgr("交易记录不存在")
+			return nil, errcode.NotFound.Msgr("交易记录不存在")
 		}
-		return errcode.DBError.Msgr("查询交易记录失败")
+		return nil, errcode.DBError.Msgr("查询交易记录失败")
 	}
 
 	// 权限验证
 	if transactionData.UserId != uint64(userID) {
-		return errcode.Forbidden.Msgr("无权操作此记录")
+		return nil, errcode.Forbidden.Msgr("无权操作此记录")
 	}
 
 	// 执行删除
 	err = l.svcCtx.TransactionsModel.Delete(l.ctx, transactionId)
 	if err != nil {
 		l.Logger.Errorf("Delete transaction failed: %v", err)
-		return errcode.DBError.Msgr("删除交易记录失败")
+		return nil, errcode.DBError.Msgr("删除交易记录失败")
 	}
 
-	return nil
+	return &types.TransactionDeleteResp{}, nil
 }

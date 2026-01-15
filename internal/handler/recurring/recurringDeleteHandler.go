@@ -32,7 +32,7 @@ func RecurringDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := recurring.NewRecurringDeleteLogic(r.Context(), svcCtx)
-		err := l.RecurringDelete(&req)
-		responses.ToResponse(r, w, nil, err)
+		resp, err := l.RecurringDelete(&req)
+		responses.ToResponse(r, w, resp, err)
 	}
 }

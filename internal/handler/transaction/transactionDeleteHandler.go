@@ -31,7 +31,7 @@ func TransactionDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := transaction.NewTransactionDeleteLogic(r.Context(), svcCtx)
-		err := l.TransactionDelete(&req)
-		responses.ToResponse(r, w, nil, err)
+		resp, err := l.TransactionDelete(&req)
+		responses.ToResponse(r, w, resp, err)
 	}
 }
