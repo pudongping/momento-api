@@ -23,6 +23,14 @@ type AccountBookDeleteReq struct {
 type AccountBookDeleteResp struct {
 }
 
+type AccountBookInviteReq struct {
+	BookId    int64  `json:"book_id" valid:"book_id"`       // 账本ID
+	TargetUid string `json:"target_uid" valid:"target_uid"` // 被邀请人的 User ID
+}
+
+type AccountBookInviteResp struct {
+}
+
 type AccountBookListReq struct {
 }
 

@@ -170,5 +170,9 @@ service momentoapi {
 	@doc "删除账本"
 	@handler accountBookDelete
 	delete /accountBooks/delete (AccountBookDeleteReq) returns (AccountBookDeleteResp)
+
+	@doc "邀请用户加入账本"
+	@handler accountBookInvite
+	post /accountBooks/invite (AccountBookInviteReq) returns (AccountBookInviteResp)
 }
 

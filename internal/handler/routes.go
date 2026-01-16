@@ -35,6 +35,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: accountBook.AccountBookDeleteHandler(serverCtx),
 				},
 				{
+					// 邀请用户加入账本
+					Method:  http.MethodPost,
+					Path:    "/accountBooks/invite",
+					Handler: accountBook.AccountBookInviteHandler(serverCtx),
+				},
+				{
 					// 获取账本列表
 					Method:  http.MethodGet,
 					Path:    "/accountBooks/list",
