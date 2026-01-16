@@ -96,5 +96,30 @@ type (
         BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
     }
     AccountBookSetDefaultResp {
+    }
+)
+
+type (
+    // 获取账本成员列表
+    AccountBookMemberListReq {
+        BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+    }
+    AccountBookMemberResp {
+        UserId string `json:"user_id"`
+        Nickname string `json:"nickname"`
+        Avatar string `json:"avatar"`
+        IsCreator int64 `json:"is_creator"` // 1-是 2-否
+        Status string `json:"status"`       // joined, waiting, rejected
+        JoinedAt int64 `json:"joined_at"`
     }    
+)
+
+type (
+    // 移除账本成员
+    AccountBookRemoveMemberReq {
+        BookId int64 `json:"book_id" valid:"book_id"`     // 账本ID
+        UserId string `json:"user_id" valid:"user_id"`    // 要移除的成员用户ID
+    }
+    AccountBookRemoveMemberResp {
+    }
 )

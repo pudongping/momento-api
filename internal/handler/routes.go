@@ -65,10 +65,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: accountBook.AccountBookListHandler(serverCtx),
 				},
 				{
+					// 获取账本成员列表
+					Method:  http.MethodGet,
+					Path:    "/accountBooks/members",
+					Handler: accountBook.AccountBookMemberListHandler(serverCtx),
+				},
+				{
 					// 拒绝邀请
 					Method:  http.MethodPost,
 					Path:    "/accountBooks/reject",
 					Handler: accountBook.AccountBookRejectHandler(serverCtx),
+				},
+				{
+					// 移除账本成员
+					Method:  http.MethodPost,
+					Path:    "/accountBooks/removeMember",
+					Handler: accountBook.AccountBookRemoveMemberHandler(serverCtx),
 				},
 				{
 					// 设置默认账本

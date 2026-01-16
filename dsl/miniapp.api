@@ -194,5 +194,13 @@ service momentoapi {
 	@doc "设置默认账本"
 	@handler accountBookSetDefault
 	put /accountBooks/setDefault (AccountBookSetDefaultReq) returns (AccountBookSetDefaultResp)
+
+	@doc "获取账本成员列表"
+	@handler accountBookMemberList
+	get /accountBooks/members (AccountBookMemberListReq) returns ([]AccountBookMemberResp)
+
+	@doc "移除账本成员"
+	@handler accountBookRemoveMember
+	post /accountBooks/removeMember (AccountBookRemoveMemberReq) returns (AccountBookRemoveMemberResp)
 }
 

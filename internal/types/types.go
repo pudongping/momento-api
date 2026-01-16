@@ -72,11 +72,32 @@ type AccountBookListResp struct {
 	CreatedAt     int64  `json:"created_at"`
 }
 
+type AccountBookMemberListReq struct {
+	BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+}
+
+type AccountBookMemberResp struct {
+	UserId    string `json:"user_id"`
+	Nickname  string `json:"nickname"`
+	Avatar    string `json:"avatar"`
+	IsCreator int64  `json:"is_creator"` // 1-是 2-否
+	Status    string `json:"status"`     // joined, waiting, rejected
+	JoinedAt  int64  `json:"joined_at"`
+}
+
 type AccountBookRejectReq struct {
 	InvitationId int64 `json:"invitation_id" valid:"invitation_id"` // 邀请ID
 }
 
 type AccountBookRejectResp struct {
+}
+
+type AccountBookRemoveMemberReq struct {
+	BookId int64  `json:"book_id" valid:"book_id"` // 账本ID
+	UserId string `json:"user_id" valid:"user_id"` // 要移除的成员用户ID
+}
+
+type AccountBookRemoveMemberResp struct {
 }
 
 type AccountBookSetDefaultReq struct {
