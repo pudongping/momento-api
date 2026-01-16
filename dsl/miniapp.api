@@ -16,7 +16,20 @@ import (
 	"transaction/transaction.api"
 	"recurring/recurring.api"
 	"accountBook/accountBook.api"
+	"upload/upload.api"
 )
+
+@server (
+	group:      common
+	tags:       "公共接口"
+	jwt:        JWTAuth
+	middleware: AuthCheckMiddleware
+)
+service momentoapi {
+	@doc "文件上传"
+	@handler uploadFile
+	post /upload/file (UploadFileReq) returns (UploadFileResp)
+}
 
 @server (
 	group: user

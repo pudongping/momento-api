@@ -334,6 +334,22 @@ type UpdateUserSettingsReq struct {
 	Budget        float64 `json:"budget,optional" valid:"budget"`
 }
 
+type UploadFileReq struct {
+	FileType     string `form:"file_type" valid:"file_type"` // 文件类型
+	BusinessType string `form:"business_type,optional"`      // 业务类型: user_avatar, background, transaction_image
+}
+
+type UploadFileResp struct {
+	FileId       int64  `json:"file_id"`
+	UserId       string `json:"user_id"`
+	RelativePath string `json:"relative_path"`
+	AbsoluteUrl  string `json:"absolute_url"`
+	FileSize     int64  `json:"file_size"`
+	FileType     string `json:"file_type"`
+	BusinessType string `json:"business_type"`
+	UploadTime   int64  `json:"upload_time"`
+}
+
 type UserInfoResp struct {
 	UserId    string `json:"user_id"`
 	OpenId    string `json:"openid"`

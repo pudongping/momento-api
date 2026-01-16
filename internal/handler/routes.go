@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	accountBook "github.com/pudongping/momento-api/internal/handler/accountBook"
+	common "github.com/pudongping/momento-api/internal/handler/common"
 	festival "github.com/pudongping/momento-api/internal/handler/festival"
 	recurring "github.com/pudongping/momento-api/internal/handler/recurring"
 	tag "github.com/pudongping/momento-api/internal/handler/tag"
@@ -87,6 +88,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPut,
 					Path:    "/accountBooks/setDefault",
 					Handler: accountBook.AccountBookSetDefaultHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.JWTAuth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
+			[]rest.Route{
+				{
+					// 文件上传
+					Method:  http.MethodPost,
+					Path:    "/upload/file",
+					Handler: common.UploadFileHandler(serverCtx),
 				},
 			}...,
 		),
