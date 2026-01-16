@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/Masterminds/squirrel"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
 	"github.com/pudongping/momento-api/internal/svc"
@@ -49,10 +50,15 @@ func (l *AccountBookRejectLogic) AccountBookReject(req *types.AccountBookRejectR
 		return nil, errcode.BadRequest.Msgr("该邀请已处理")
 	}
 
-	// 3. 更新邀请状态
-	invitation.Status = model.AccountBookInvitationStatusRejected
-	invitation.UpdatedAt = uint64(time.Now().Unix())
-	if err := l.svcCtx.AccountBookInvitationsModel.Update(l.ctx, invitation); err != nil {
+	// 3. 更新邀请状态 (使用 UpdateFilter)
+	updateData := map[string]interface{}{
+		"status":     model.AccountBookInvitationStatusRejected,
+		"updated_at": time.Now().Unix(),
+	}
+	where := squirrel.Eq{"invitation_id": invitation.InvitationId}
+
+	// 显式传 nil session，表示不使用事务
+	if _, err := l.svcCtx.AccountBookInvitationsModel.UpdateFilter(l.ctx, nil, updateData, where); err != nil {
 		l.Logger.Errorf("Update invitation status error: %v", err)
 		return nil, errcode.DBError.Msgr("更新邀请状态失败")
 	}
