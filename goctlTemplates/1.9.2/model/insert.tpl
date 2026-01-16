@@ -33,6 +33,16 @@ func (m *default{{.upperStartCamelObject}}Model) ExecContext(ctx context.Context
     return m.conn.ExecCtx(ctx, query, args...)
 }
 
+func (m *default{{.upperStartCamelObject}}Model) InsertWithSession(ctx context.Context, session sqlx.Session, insertData map[string]interface{}) (sql.Result, error) {
+    insertBuilder := squirrel.Insert(m.table).SetMap(insertData)
+    query, values, err := insertBuilder.ToSql()
+    if err != nil {
+        return nil, err
+    }
+
+    return m.ExecContext(ctx, session, query, values...)
+}
+
 func (m *default{{.upperStartCamelObject}}Model) DeleteFilter(ctx context.Context, session sqlx.Session, where squirrel.Sqlizer) (sql.Result, error) {
     deleteBuilder := squirrel.Delete(m.table).Where(where)
     query, values, err := deleteBuilder.ToSql()
