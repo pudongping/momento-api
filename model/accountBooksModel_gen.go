@@ -33,6 +33,7 @@ type (
 		GetTableName() string
 		Transaction(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error
 		ExecContext(ctx context.Context, session sqlx.Session, query string, args ...interface{}) (sql.Result, error)
+		InsertWithSession(ctx context.Context, session sqlx.Session, insertData map[string]interface{}) (sql.Result, error)
 		DeleteFilter(ctx context.Context, session sqlx.Session, where squirrel.Sqlizer) (sql.Result, error)
 		UpdateFilter(ctx context.Context, session sqlx.Session, updateData map[string]interface{}, where squirrel.Sqlizer) (sql.Result, error)
 		SelectBuilder(fields ...string) squirrel.SelectBuilder
@@ -117,6 +118,16 @@ func (m *defaultAccountBooksModel) ExecContext(ctx context.Context, session sqlx
 		return session.ExecCtx(ctx, query, args...)
 	}
 	return m.conn.ExecCtx(ctx, query, args...)
+}
+
+func (m *defaultAccountBooksModel) InsertWithSession(ctx context.Context, session sqlx.Session, insertData map[string]interface{}) (sql.Result, error) {
+	insertBuilder := squirrel.Insert(m.table).SetMap(insertData)
+	query, values, err := insertBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	return m.ExecContext(ctx, session, query, values...)
 }
 
 func (m *defaultAccountBooksModel) DeleteFilter(ctx context.Context, session sqlx.Session, where squirrel.Sqlizer) (sql.Result, error) {
