@@ -63,17 +63,10 @@ func (l *AccountBookAddLogic) AccountBookAdd(req *types.AccountBookAddReq) (resp
 			"created_at":      now,
 			"updated_at":      now,
 		}
-		query, args, err := squirrel.Insert(l.svcCtx.AccountBooksModel.GetTableName()).
-			SetMap(insertBookMap).
-			ToSql()
-		if err != nil {
-			return errors.Wrap(err, "构建创建账本SQL失败")
-		}
 
-		// 1. Create Account Book
-		res, err := l.svcCtx.AccountBooksModel.ExecContext(ctx, session, query, args...)
+		res, err := l.svcCtx.AccountBooksModel.InsertWithSession(ctx, session, insertBookMap)
 		if err != nil {
-			return errors.Wrap(err, "执行创建账本SQL失败")
+			return errors.Wrap(err, "创建账本失败")
 		}
 
 		bookId, err := res.LastInsertId()
@@ -92,14 +85,8 @@ func (l *AccountBookAddLogic) AccountBookAdd(req *types.AccountBookAddReq) (resp
 			"created_at": now,
 			"updated_at": now,
 		}
-		query, args, err = squirrel.Insert(l.svcCtx.AccountBookMembersModel.GetTableName()).
-			SetMap(insertMemberMap).
-			ToSql()
-		if err != nil {
-			return errors.Wrap(err, "构建添加账本成员SQL失败")
-		}
 
-		_, err = l.svcCtx.AccountBookMembersModel.ExecContext(ctx, session, query, args...)
+		_, err = l.svcCtx.AccountBookMembersModel.InsertWithSession(ctx, session, insertMemberMap)
 		if err != nil {
 			return errors.Wrap(err, "添加账本成员失败")
 		}
