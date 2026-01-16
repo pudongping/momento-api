@@ -24,7 +24,7 @@ func UploadFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := common.NewUploadFileLogic(r.Context(), svcCtx)
-		resp, err := l.UploadFile(&req)
+		resp, err := l.UploadFile(&req, r)
 		responses.ToResponse(r, w, resp, err)
 	}
 }

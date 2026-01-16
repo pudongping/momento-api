@@ -28,6 +28,7 @@ type ServiceContext struct {
 	AccountBooksModel          model.AccountBooksModel
 	AccountBookMembersModel    model.AccountBookMembersModel
 	AccountBookInvitationsModel model.AccountBookInvitationsModel
+	UploadFilesModel           model.UploadFilesModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -52,6 +53,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	accountBooksModel := model.NewAccountBooksModel(mysqlConn)
 	accountBookMembersModel := model.NewAccountBookMembersModel(mysqlConn)
 	accountBookInvitationsModel := model.NewAccountBookInvitationsModel(mysqlConn)
+	uploadFilesModel := model.NewUploadFilesModel(mysqlConn)
 
 	return &ServiceContext{
 		Config:      c,
@@ -69,5 +71,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AccountBooksModel:          accountBooksModel,
 		AccountBookMembersModel:    accountBookMembersModel,
 		AccountBookInvitationsModel: accountBookInvitationsModel,
+		UploadFilesModel:           uploadFilesModel,
 	}
 }
