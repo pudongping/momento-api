@@ -23,6 +23,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthCheckMiddleware},
 			[]rest.Route{
 				{
+					// 接受邀请
+					Method:  http.MethodPost,
+					Path:    "/accountBooks/accept",
+					Handler: accountBook.AccountBookAcceptHandler(serverCtx),
+				},
+				{
 					// 创建账本
 					Method:  http.MethodPost,
 					Path:    "/accountBooks/create",
@@ -35,6 +41,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: accountBook.AccountBookDeleteHandler(serverCtx),
 				},
 				{
+					// 退出账本
+					Method:  http.MethodPost,
+					Path:    "/accountBooks/exit",
+					Handler: accountBook.AccountBookExitHandler(serverCtx),
+				},
+				{
+					// 获取邀请列表
+					Method:  http.MethodGet,
+					Path:    "/accountBooks/invitations",
+					Handler: accountBook.AccountBookInvitationListHandler(serverCtx),
+				},
+				{
 					// 邀请用户加入账本
 					Method:  http.MethodPost,
 					Path:    "/accountBooks/invite",
@@ -45,6 +63,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/accountBooks/list",
 					Handler: accountBook.AccountBookListHandler(serverCtx),
+				},
+				{
+					// 拒绝邀请
+					Method:  http.MethodPost,
+					Path:    "/accountBooks/reject",
+					Handler: accountBook.AccountBookRejectHandler(serverCtx),
+				},
+				{
+					// 设置默认账本
+					Method:  http.MethodPut,
+					Path:    "/accountBooks/setDefault",
+					Handler: accountBook.AccountBookSetDefaultHandler(serverCtx),
 				},
 			}...,
 		),

@@ -3,6 +3,13 @@
 
 package types
 
+type AccountBookAcceptReq struct {
+	InvitationId int64 `json:"invitation_id" valid:"invitation_id"` // 邀请ID
+}
+
+type AccountBookAcceptResp struct {
+}
+
 type AccountBookAddReq struct {
 	Name string `json:"name" valid:"name"` // 账本名称
 }
@@ -21,6 +28,27 @@ type AccountBookDeleteReq struct {
 }
 
 type AccountBookDeleteResp struct {
+}
+
+type AccountBookExitReq struct {
+	BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+}
+
+type AccountBookExitResp struct {
+}
+
+type AccountBookInvitationListReq struct {
+}
+
+type AccountBookInvitationListResp struct {
+	InvitationId    int64  `json:"invitation_id"`
+	BookId          int64  `json:"book_id"`
+	BookName        string `json:"book_name"`
+	InviterUid      string `json:"inviter_uid"`
+	InviterNickname string `json:"inviter_nickname"`
+	TargetUid       string `json:"target_uid"`
+	Status          string `json:"status"` // pending, accepted, rejected
+	CreatedAt       int64  `json:"created_at"`
 }
 
 type AccountBookInviteReq struct {
@@ -42,6 +70,20 @@ type AccountBookListResp struct {
 	IsDefault     int64  `json:"is_default"`   // 1-是默认账本 2-不是
 	MemberCount   int64  `json:"member_count"` // 成员数量
 	CreatedAt     int64  `json:"created_at"`
+}
+
+type AccountBookRejectReq struct {
+	InvitationId int64 `json:"invitation_id" valid:"invitation_id"` // 邀请ID
+}
+
+type AccountBookRejectResp struct {
+}
+
+type AccountBookSetDefaultReq struct {
+	BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+}
+
+type AccountBookSetDefaultResp struct {
 }
 
 type FestivalAddReq struct {

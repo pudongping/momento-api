@@ -56,3 +56,63 @@ func AccountBookDeleteRequestCheck(data interface{}) map[string][]string {
 
 	return validator.ValidateStruct(data, rules, messages)
 }
+
+func AccountBookAcceptRequestCheck(data interface{}) map[string][]string {
+	rules := govalidator.MapData{
+		"invitation_id": []string{"required", "numeric_between:1,"},
+	}
+
+	messages := govalidator.MapData{
+		"invitation_id": []string{
+			"required:邀请ID为必填项",
+			"numeric_between:邀请ID必须是数字并且大于等于 1",
+		},
+	}
+
+	return validator.ValidateStruct(data, rules, messages)
+}
+
+func AccountBookRejectRequestCheck(data interface{}) map[string][]string {
+	rules := govalidator.MapData{
+		"invitation_id": []string{"required", "numeric_between:1,"},
+	}
+
+	messages := govalidator.MapData{
+		"invitation_id": []string{
+			"required:邀请ID为必填项",
+			"numeric_between:邀请ID必须是数字并且大于等于 1",
+		},
+	}
+
+	return validator.ValidateStruct(data, rules, messages)
+}
+
+func AccountBookExitRequestCheck(data interface{}) map[string][]string {
+	rules := govalidator.MapData{
+		"book_id": []string{"required", "numeric_between:1,"},
+	}
+
+	messages := govalidator.MapData{
+		"book_id": []string{
+			"required:账本ID为必填项",
+			"numeric_between:账本ID必须是数字并且大于等于 1",
+		},
+	}
+
+	return validator.ValidateStruct(data, rules, messages)
+}
+
+func AccountBookSetDefaultRequestCheck(data interface{}) map[string][]string {
+	rules := govalidator.MapData{
+		"book_id": []string{"required", "numeric_between:1,"},
+	}
+
+	messages := govalidator.MapData{
+		"book_id": []string{
+			"required:账本ID为必填项",
+			"numeric_between:账本ID必须是数字并且大于等于 1",
+		},
+	}
+
+	return validator.ValidateStruct(data, rules, messages)
+}

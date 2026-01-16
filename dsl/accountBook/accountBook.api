@@ -46,3 +46,55 @@ type (
     AccountBookInviteResp {
     }
 )
+
+type (
+    // 获取邀请列表
+    AccountBookInvitationListReq {
+    }
+    AccountBookInvitationListResp {
+        InvitationId int64 `json:"invitation_id"`
+        BookId int64 `json:"book_id"`
+        BookName string `json:"book_name"`
+        InviterUid string `json:"inviter_uid"`
+        InviterNickname string `json:"inviter_nickname"`
+        TargetUid string `json:"target_uid"`
+        Status string `json:"status"` // pending, accepted, rejected
+        CreatedAt int64 `json:"created_at"`
+    }
+)
+
+type (
+    // 接受邀请
+    AccountBookAcceptReq {
+        InvitationId int64 `json:"invitation_id" valid:"invitation_id"` // 邀请ID
+    }
+    AccountBookAcceptResp {
+    }
+)
+
+type (
+    // 拒绝邀请
+    AccountBookRejectReq {
+        InvitationId int64 `json:"invitation_id" valid:"invitation_id"` // 邀请ID
+    }
+    AccountBookRejectResp {
+    }
+)
+
+type (
+    // 退出账本
+    AccountBookExitReq {
+        BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+    }
+    AccountBookExitResp {
+    }
+)
+
+type (
+    // 设置默认账本
+    AccountBookSetDefaultReq {
+        BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+    }
+    AccountBookSetDefaultResp {
+    }    
+)
