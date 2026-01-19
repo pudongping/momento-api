@@ -25,7 +25,7 @@ type (
 type (
     // 删除周期性记账规则
     RecurringDeleteReq {
-        RecurringId string `form:"recurring_id" valid:"recurring_id"` // 周期性记账规则 ID
+        RecurringId string `json:"recurring_id" valid:"recurring_id"` // 周期性记账规则 ID
     }
 
     RecurringDeleteResp {

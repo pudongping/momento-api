@@ -82,7 +82,7 @@ type (
 type (
     // 删除账单记录
     TransactionDeleteReq {
-        TransactionId string `form:"transaction_id" valid:"transaction_id"` // 交易记录 ID
+        TransactionId string `json:"transaction_id" valid:"transaction_id"` // 交易记录 ID
     }
 
     TransactionDeleteResp {

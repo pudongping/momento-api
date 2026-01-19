@@ -38,6 +38,6 @@ type (
 type (
     // 删除标签
     TagDeleteReq {
-        TagId int64 `form:"tag_id" valid:"tag_id"`               // 标签ID
+        TagId int64 `json:"tag_id" valid:"tag_id"`               // 标签ID
     }
 )

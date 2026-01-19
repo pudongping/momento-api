@@ -24,7 +24,7 @@ type AccountBookAddResp struct {
 }
 
 type AccountBookDeleteReq struct {
-	BookId int64 `form:"book_id" valid:"book_id"` // 账本ID
+	BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
 }
 
 type AccountBookDeleteResp struct {
@@ -117,7 +117,7 @@ type FestivalAddResp struct {
 }
 
 type FestivalDeleteReq struct {
-	FestivalId int64 `form:"festival_id" valid:"festival_id"` // 节日ID
+	FestivalId int64 `json:"festival_id" valid:"festival_id"` // 节日ID
 }
 
 type FestivalDeleteResp struct {
@@ -169,7 +169,7 @@ type LoginResp struct {
 }
 
 type RecurringDeleteReq struct {
-	RecurringId string `form:"recurring_id" valid:"recurring_id"` // 周期性记账规则 ID
+	RecurringId string `json:"recurring_id" valid:"recurring_id"` // 周期性记账规则 ID
 }
 
 type RecurringDeleteResp struct {
@@ -204,7 +204,7 @@ type TagAddReq struct {
 }
 
 type TagDeleteReq struct {
-	TagId int64 `form:"tag_id" valid:"tag_id"` // 标签ID
+	TagId int64 `json:"tag_id" valid:"tag_id"` // 标签ID
 }
 
 type TagListReq struct {
@@ -260,7 +260,7 @@ type TransactionAddResp struct {
 }
 
 type TransactionDeleteReq struct {
-	TransactionId string `form:"transaction_id" valid:"transaction_id"` // 交易记录 ID
+	TransactionId string `json:"transaction_id" valid:"transaction_id"` // 交易记录 ID
 }
 
 type TransactionDeleteResp struct {

@@ -31,7 +31,7 @@ type (
 type (
     // 删除账本
     AccountBookDeleteReq {
-        BookId int64 `form:"book_id" valid:"book_id"` // 账本ID
+        BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
     }
     AccountBookDeleteResp {
     }

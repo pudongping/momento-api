@@ -24,7 +24,7 @@ type (
 type (
 	// 删除节日
 	FestivalDeleteReq {
-		FestivalId int64 `form:"festival_id" valid:"festival_id"` // 节日ID
+		FestivalId int64 `json:"festival_id" valid:"festival_id"` // 节日ID
 	}
 	FestivalDeleteResp {
 	}
