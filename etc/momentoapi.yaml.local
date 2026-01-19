@@ -10,7 +10,7 @@ Verbose: true
 # http 同时可接受最大请求数（限流数），默认 10000
 MaxConns: 10000
 # http 可接受请求的最大 ContentLength，默认 1048576，被设置的值必须在 0 到 8388608 之间
-MaxBytes: 1048576
+MaxBytes: 20971520
 # 超时时长控制，单位：毫秒，默认 3000
 Timeout: 3000
 # cpu 降载阈值，默认 900，可允许设置范围 0 到 1000
@@ -18,6 +18,25 @@ CpuThreshold: 900
 
 AppService:
   StaticFSRelativePath: http://0.0.0.0:9504/static
+
+UploadFile:
+  # 保存路径，相对于项目根目录
+  SavePath: public/uploads
+  # 文件上传最大限制，单位：MB
+  MaxSize: 10
+  # 允许上传的文件类型后缀
+  AllowExts:
+    - .jpg
+    - .jpeg
+    - .png
+    - .gif
+    - .bmp
+    - .pdf
+    - .doc
+    - .docx
+    - .xls
+    - .xlsx
+    - .txt
 
 Mysql:
   DataSource: root:123456@tcp(127.0.0.1:3306)/momento?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai

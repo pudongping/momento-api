@@ -33,4 +33,10 @@ type Config struct {
 		AppID     string `json:"AppID"`     // 微信小程序的 app_id
 		AppSecret string `json:"AppSecret"` // 微信小程序的 app_secret
 	}
+
+	UploadFile struct {
+		SavePath  string   // 文件保存路径
+		MaxSize   int64    // 最大文件大小，单位字节
+		AllowExts []string // 允许的文件类型后缀
+	}
 }

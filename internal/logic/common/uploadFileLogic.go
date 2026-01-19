@@ -5,19 +5,19 @@ package common
 
 import (
 	"context"
-	"fmt"
-	"io"
 	"net/http"
-	"os"
 	"path/filepath"
-	"strconv"
 	"time"
 
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
+	"github.com/pudongping/momento-api/coreKit/helpers/fileHelper"
 	"github.com/pudongping/momento-api/internal/svc"
 	"github.com/pudongping/momento-api/internal/types"
 	"github.com/pudongping/momento-api/model"
+	"github.com/spf13/cast"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -37,101 +37,72 @@ func NewUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upload
 	}
 }
 
-func (l *UploadFileLogic) UploadFile(req *types.UploadFileReq, r *http.Request) (resp *types.UploadFileResp, err error) {
-	file, fileHeader, err := r.FormFile("file")
-	// 获取用户ID
+func (l *UploadFileLogic) UploadFile(req *types.UploadFileReq, r *http.Request) (*types.UploadFileResp, error) {
+	file, fileHeader, err := r.FormFile("file") // 读取入参 file 字段的上传文件信息
+	if err != nil {
+		return nil, errcode.ErrorUploadFileFail.WithError(errors.Wrap(err, "获取上传文件失败"))
+	}
+
 	userId := ctxData.GetUIDFromCtx(l.ctx)
-	if userId == 0 {
+	if userId <= 0 {
 		return nil, errcode.Unauthorized.Msgr("用户未登录")
 	}
 
-	// 验证文件大小（最大 10MB）
-	maxFileSize := int64(10 * 1024 * 1024)
-	if fileHeader.Size > maxFileSize {
-		return nil, errcode.BadRequest.Msgf("文件大小不能超过 %dMB", maxFileSize/1024/1024)
-	}
-
-	// 验证文件类型
-	allowedTypes := map[string]bool{
-		"jpg":  true,
-		"jpeg": true,
-		"png":  true,
-		"gif":  true,
-		"pdf":  true,
-	}
-
-	fileExt := filepath.Ext(fileHeader.Filename)
-	if len(fileExt) > 0 {
-		fileExt = fileExt[1:] // 移除 .
-	}
-
-	if !allowedTypes[fileExt] {
+	savePath := filepath.Join(l.svcCtx.Config.UploadFile.SavePath, req.FileType)
+	localStorageIns := fileHelper.NewLocalStorage(
+		savePath,
+		file,
+		fileHeader,
+		fileHelper.WithMaxSize(l.svcCtx.Config.UploadFile.MaxSize),
+	)
+	// 检查文件类型
+	if !localStorageIns.CheckFileExts(fileHeader, l.svcCtx.Config.UploadFile.AllowExts) {
 		return nil, errcode.BadRequest.Msgr("不支持的文件类型")
 	}
-
-	// 生成文件保存路径
-	now := time.Now()
-	uploadDir := fmt.Sprintf("public/uploads/%d/%d/%d", now.Year(), now.Month(), now.Day())
-	os.MkdirAll(uploadDir, 0755)
-
-	// 生成唯一文件名
-	newFileName := fmt.Sprintf("%d_%s_%s", userId, strconv.FormatInt(time.Now().UnixNano(), 10), fileHeader.Filename)
-	filePath := filepath.Join(uploadDir, newFileName)
-
-	// 读取文件大小
-	fileContent, err := io.ReadAll(file)
+	// 保存文件
+	dst, err := localStorageIns.Save()
 	if err != nil {
-		l.Errorf("读取文件失败: %v", err)
-		return nil, errcode.InternalServerError.Msgr("文件读取失败")
-	}
-	fileSize := int64(len(fileContent))
-
-	// 保存文件到本地
-	err = os.WriteFile(filePath, fileContent, 0644)
-	if err != nil {
-		l.Errorf("保存文件失败: %v", err)
-		return nil, errcode.InternalServerError.Msgr("文件保存失败")
+		return nil, errcode.ErrorUploadFileFail.Msgr("文件保存失败").WithError(errors.Wrap(err, "保存文件失败"))
 	}
 
-	// 生成相对路径和绝对 URL
-	relativePath := fmt.Sprintf("/%s/%s", uploadDir, newFileName)
-	absoluteUrl := fmt.Sprintf("http://%s:%d%s", l.svcCtx.Config.Host, l.svcCtx.Config.Port, relativePath)
+	fileSize, err := fileHelper.FileContentSize(file)
+	if err != nil {
+		return nil, errcode.InternalServerError.Msgr("获取文件大小失败").WithError(errors.Wrap(err, "获取文件大小失败"))
+	}
 
-	// 保存文件记录到数据库
-	uploadTime := time.Now().Unix()
+	// 网址路径
+	dst = filepath.Join("/", dst)
+	absoluteUrl := l.svcCtx.Config.AppService.StaticFSRelativePath + dst
+
+	now := time.Now().Unix()
 	uploadFile := &model.UploadFiles{
-		UserId:       uint64(userId),
-		RelativePath: relativePath,
+		UserId:       cast.ToUint64(userId),
+		RelativePath: dst,
 		AbsoluteUrl:  absoluteUrl,
-		FileSize:     uint64(fileSize),
-		FileType:     fileExt,
+		FileSize:     cast.ToUint64(fileSize),
+		FileType:     req.FileType,
 		BusinessType: req.BusinessType,
-		UploadTime:   uint64(uploadTime),
-		CreatedAt:    uint64(uploadTime),
+		UploadTime:   cast.ToUint64(now),
+		CreatedAt:    cast.ToUint64(now),
 	}
 
 	result, err := l.svcCtx.UploadFilesModel.Insert(l.ctx, uploadFile)
 	if err != nil {
-		l.Errorf("保存文件记录失败: %v", err)
-		return nil, errcode.DBError.Msgr("保存文件记录失败")
+		return nil, errcode.DBError.Msgr("保存文件记录失败").WithError(errors.Wrap(err, "保存文件记录失败"))
 	}
 
 	fileId, err := result.LastInsertId()
 	if err != nil {
-		l.Errorf("获取文件ID失败: %v", err)
-		return nil, errcode.InternalServerError.Msgr("获取文件ID失败")
+		return nil, errcode.DBError.Msgr("获取文件ID失败").WithError(errors.Wrap(err, "获取文件ID失败"))
 	}
 
-	resp = &types.UploadFileResp{
-		FileId:       fileId,
-		UserId:       strconv.FormatInt(userId, 10),
-		RelativePath: relativePath,
-		AbsoluteUrl:  absoluteUrl,
-		FileSize:     fileSize,
-		FileType:     fileExt,
-		BusinessType: req.BusinessType,
-		UploadTime:   uploadTime,
+	var resp types.UploadFileResp
+	if err := copier.Copy(&resp, uploadFile); err != nil {
+		return nil, errcode.Fail.Msgr("数据转换失败").WithError(errors.Wrap(err, "数据转换失败"))
 	}
+	resp.FileId = cast.ToInt64(fileId)
+	resp.UserId = cast.ToString(userId)
+	resp.FileSize = cast.ToInt64(fileSize)
 
-	return resp, nil
+	return &resp, nil
 }

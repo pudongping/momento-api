@@ -30,18 +30,24 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	// X-Request-ID: {request_id}          // 请求唯一标识，用于防重复提交
-	// X-Device-ID: {device_id}            // 设备ID，用于设备识别
-	// X-User-ID: {user_id}                // 用户ID（已登录时携带）
-	server := rest.MustNewServer(
-		c.RestConf,
+	opts := []rest.RunOption{
 		rest.WithCustomCors(func(header http.Header) {
 			header.Set("Access-Control-Allow-Headers", "Content-Type, Origin, X-CSRF-Token, Authorization, AccessToken, Token, Range, X-Token, X-Request-ID, X-Device-ID, X-User-ID")
 		}, nil),
 		rest.WithUnauthorizedCallback(httpRest.UnauthorizedHandler),
 		rest.WithNotFoundHandler(httpRest.NotFoundHandler()),
 		rest.WithNotAllowedHandler(httpRest.NotAllowedHandler()),
-	)
+	}
+
+	if c.Mode != "dev" || c.Mode != "test" {
+		logx.DisableStat()
+	}
+	if c.Mode == "dev" {
+		// 提供文件服务：https://go-zero.dev/faq/http/fileserver
+		opts = append(opts, rest.WithFileServer("/static/public", http.Dir("public")))
+	}
+
+	server := rest.MustNewServer(c.RestConf, opts...)
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
@@ -61,5 +67,10 @@ func main() {
 	})
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
+
+	if c.Mode == "dev" {
+		server.PrintRoutes() // 打印路由表
+	}
+
 	server.Start()
 }

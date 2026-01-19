@@ -28,8 +28,19 @@ func NameWithoutExtension(fileName string) string {
 // CheckMaxSize 检查文件大小是否超出最大限制（kb 进行比较）
 // true 超出，false 没有超出
 func CheckMaxSize(f multipart.File, maxSize int) bool {
-	content, _ := io.ReadAll(f)
-	return len(content) >= maxSize
+	size, _ := FileContentSize(f)
+	return int(size) >= maxSize
+}
+
+// FileContentSize 获取文件内容大小
+//
+// 返回文件大小（单位：字节）
+func FileContentSize(f multipart.File) (int64, error) {
+	content, err := io.ReadAll(f)
+	if err != nil {
+		return 0, err
+	}
+	return int64(len(content)), nil
 }
 
 // CheckPermission 检查文件权限是否足够
