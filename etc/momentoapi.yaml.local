@@ -86,3 +86,7 @@ WXMiniProgram:
   # 微信小程序 AppID 和 AppSecret
   AppID: your-wx-mini-program-appid
   AppSecret: your-wx-mini-program-appsecret
+
+Tinify:
+  ShrinkURL: https://api.tinify.com/shrink
+  APIKey: your_tinify_cn_api_key_here

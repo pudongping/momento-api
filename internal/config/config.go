@@ -39,4 +39,8 @@ type Config struct {
 		MaxSize   int64    // 最大文件大小，单位字节
 		AllowExts []string // 允许的文件类型后缀
 	}
+
+	Tinify struct {
+		ShrinkURL, APIKey string
+	}
 }
