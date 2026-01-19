@@ -8,7 +8,8 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-const defaultPerPage = 20
+// DefaultPerPage 默认每页显示数
+const DefaultPerPage = 20
 
 type Pagination struct {
 	Total    int64 `json:"total"`    // 数据总条数
@@ -70,7 +71,7 @@ func PrepareOffsetLimit(page, perPage int64) (int64, int64, int64) {
 		page = 1
 	}
 	if perPage <= 0 {
-		perPage = defaultPerPage
+		perPage = DefaultPerPage
 	}
 
 	offset := (page - 1) * perPage

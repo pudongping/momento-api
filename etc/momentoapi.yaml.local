@@ -38,7 +38,7 @@ CacheRedis:
     Weight: 100
 
 JWTAuth:
-  AccessSecret: BpOkRaa2pncDI1dFZqaGtMRzhHWGswbkYzdHBOU2
+  AccessSecret: BpOkRaa8pncDI1dFZqaGtMRzhHWGswbkYzdHBOU2
   # jwt token 有效期，单位：秒（1296000s=15days）
   AccessExpire: 1296000
 
