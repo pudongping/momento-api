@@ -31,7 +31,7 @@ type (
 type (
     // 删除账本
     AccountBookDeleteReq {
-        BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+        BookId int64 `form:"book_id" valid:"book_id"` // 账本ID
     }
     AccountBookDeleteResp {
     }
@@ -102,7 +102,7 @@ type (
 type (
     // 获取账本成员列表
     AccountBookMemberListReq {
-        BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+        BookId int64 `form:"book_id" valid:"book_id"` // 账本ID
     }
     AccountBookMemberResp {
         UserId string `json:"user_id"`

@@ -24,7 +24,7 @@ type AccountBookAddResp struct {
 }
 
 type AccountBookDeleteReq struct {
-	BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+	BookId int64 `form:"book_id" valid:"book_id"` // 账本ID
 }
 
 type AccountBookDeleteResp struct {
@@ -73,7 +73,7 @@ type AccountBookListResp struct {
 }
 
 type AccountBookMemberListReq struct {
-	BookId int64 `json:"book_id" valid:"book_id"` // 账本ID
+	BookId int64 `form:"book_id" valid:"book_id"` // 账本ID
 }
 
 type AccountBookMemberResp struct {
@@ -117,7 +117,7 @@ type FestivalAddResp struct {
 }
 
 type FestivalDeleteReq struct {
-	FestivalId int64 `json:"festival_id" valid:"festival_id"` // 节日ID
+	FestivalId int64 `form:"festival_id" valid:"festival_id"` // 节日ID
 }
 
 type FestivalDeleteResp struct {
@@ -169,7 +169,7 @@ type LoginResp struct {
 }
 
 type RecurringDeleteReq struct {
-	RecurringId string `json:"recurring_id" valid:"recurring_id"` // 周期性记账规则 ID
+	RecurringId string `form:"recurring_id" valid:"recurring_id"` // 周期性记账规则 ID
 }
 
 type RecurringDeleteResp struct {
@@ -189,7 +189,7 @@ type RecurringItem struct {
 }
 
 type RecurringListReq struct {
-	BookId int64 `json:"book_id" valid:"book_id"` // 账本 ID
+	BookId int64 `form:"book_id" valid:"book_id"` // 账本 ID
 }
 
 type RecurringListResp struct {
@@ -204,11 +204,11 @@ type TagAddReq struct {
 }
 
 type TagDeleteReq struct {
-	TagId int64 `json:"tag_id" valid:"tag_id"` // 标签ID
+	TagId int64 `form:"tag_id" valid:"tag_id"` // 标签ID
 }
 
 type TagListReq struct {
-	Type string `json:"type,optional" valid:"type"` // expense-支出 income-收入
+	Type string `form:"type,optional" valid:"type"` // expense-支出 income-收入
 }
 
 type TagListResp struct {
@@ -260,7 +260,7 @@ type TransactionAddResp struct {
 }
 
 type TransactionDeleteReq struct {
-	TransactionId string `json:"transaction_id" valid:"transaction_id"` // 交易记录 ID
+	TransactionId string `form:"transaction_id" valid:"transaction_id"` // 交易记录 ID
 }
 
 type TransactionDeleteResp struct {
@@ -284,14 +284,14 @@ type TransactionItem struct {
 }
 
 type TransactionListReq struct {
-	BookId            int64  `json:"book_id" valid:"book_id"`                         // 账本 ID
-	Type              string `json:"type,optional" valid:"type"`                      // 交易类型: expense (支出), income (收入)
-	TagId             int64  `json:"tag_id,optional"`                                 // 标签 ID
-	StartDate         int64  `json:"start_date,optional"`                             // 开始时间戳 (秒)
-	EndDate           int64  `json:"end_date,optional"`                               // 结束时间戳 (秒)
-	Page              int64  `json:"page,optional"`                                   // 页码，默认 1
-	PerPage           int64  `json:"per_page,optional"`                               // 每页数量，默认 20
-	LastTransactionId int64  `json:"last_transaction_id" valid:"last_transaction_id"` // 上一页最后一条记录 ID (用于游标分页优化，必填，最小为0)
+	BookId            int64  `form:"book_id" valid:"book_id"`                         // 账本 ID
+	Type              string `form:"type,optional" valid:"type"`                      // 交易类型: expense (支出), income (收入)
+	TagId             int64  `form:"tag_id,optional"`                                 // 标签 ID
+	StartDate         int64  `form:"start_date,optional"`                             // 开始时间戳 (秒)
+	EndDate           int64  `form:"end_date,optional"`                               // 结束时间戳 (秒)
+	Page              int64  `form:"page,optional"`                                   // 页码，默认 1
+	PerPage           int64  `form:"per_page,optional"`                               // 每页数量，默认 20
+	LastTransactionId int64  `form:"last_transaction_id" valid:"last_transaction_id"` // 上一页最后一条记录 ID (用于游标分页优化，必填，最小为0)
 }
 
 type TransactionListResp struct {
@@ -303,11 +303,11 @@ type TransactionListResp struct {
 }
 
 type TransactionStatsReq struct {
-	BookId    int64  `json:"book_id" valid:"book_id"`    // 账本 ID
-	Type      string `json:"type,optional" valid:"type"` // 交易类型: expense (支出), income (收入)
-	TagId     int64  `json:"tag_id,optional"`            // 标签 ID
-	StartDate int64  `json:"start_date,optional"`        // 开始时间戳 (秒)
-	EndDate   int64  `json:"end_date,optional"`          // 结束时间戳 (秒)
+	BookId    int64  `form:"book_id" valid:"book_id"`    // 账本 ID
+	Type      string `form:"type,optional" valid:"type"` // 交易类型: expense (支出), income (收入)
+	TagId     int64  `form:"tag_id,optional"`            // 标签 ID
+	StartDate int64  `form:"start_date,optional"`        // 开始时间戳 (秒)
+	EndDate   int64  `form:"end_date,optional"`          // 结束时间戳 (秒)
 }
 
 type TransactionStatsResp struct {

@@ -216,3 +216,4 @@ service momentoapi {
 	@handler accountBookRemoveMember
 	post /accountBooks/removeMember (AccountBookRemoveMemberReq) returns (AccountBookRemoveMemberResp)
 }
+

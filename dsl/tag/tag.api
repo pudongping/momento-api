@@ -1,6 +1,6 @@
 type (
     TagListReq {
-        Type string `json:"type,optional" valid:"type"` // expense-支出 income-收入
+        Type string `form:"type,optional" valid:"type"` // expense-支出 income-收入
     }
     TagListResp {
         TagId int64 `json:"tag_id"`
@@ -38,6 +38,6 @@ type (
 type (
     // 删除标签
     TagDeleteReq {
-        TagId int64 `json:"tag_id" valid:"tag_id"`               // 标签ID
+        TagId int64 `form:"tag_id" valid:"tag_id"`               // 标签ID
     }
 )
