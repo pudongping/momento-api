@@ -37,11 +37,11 @@ func (l *AccountBookInviteLogic) AccountBookInvite(req *types.AccountBookInviteR
 
 	targetUID := cast.ToUint64(req.TargetUid)
 	if targetUID == 0 {
-		return nil, errcode.UnprocessableEntity.Msgf("被邀请人ID无效")
+		return nil, errcode.UnprocessableEntity.Msgr("被邀请人ID无效")
 	}
 
 	if userID == targetUID {
-		return nil, errcode.UnprocessableEntity.Msgf("不能邀请自己")
+		return nil, errcode.UnprocessableEntity.Msgr("自己不能邀请自己")
 	}
 
 	// 2. 检查被邀请人是否存在
@@ -110,5 +110,5 @@ func (l *AccountBookInviteLogic) AccountBookInvite(req *types.AccountBookInviteR
 		return nil, errcode.DBError.Msgr("邀请失败").WithError(errors.Wrap(err, "AccountBookInvite Insert error"))
 	}
 
-	return &types.AccountBookInviteResp{}, nil
+	return nil, nil
 }

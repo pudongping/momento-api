@@ -52,7 +52,7 @@ func (l *AccountBookRemoveMemberLogic) AccountBookRemoveMember(req *types.Accoun
 	// 4. Check target validity
 	// Cannot remove self (use exit)
 	if targetUserId == operatorId {
-		return nil, errcode.Fail.Msgr("不能移除自己，请使用退出账本功能")
+		return nil, errcode.Fail.Msgr("创建者不能移除自己")
 	}
 
 	// Check if target is member
