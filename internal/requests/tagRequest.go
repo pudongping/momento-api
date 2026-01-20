@@ -23,7 +23,7 @@ func TagAddRequestCheck(data interface{}) map[string][]string {
 	rules := govalidator.MapData{
 		"name":  []string{"required", "min_cn:1", "max_cn:6"},
 		"color": []string{"required"},
-		"icon":  []string{"max:10"},
+		"icon":  []string{"max:20"},
 		"type":  []string{"required", "in:expense,income"},
 	}
 
@@ -37,7 +37,7 @@ func TagAddRequestCheck(data interface{}) map[string][]string {
 			"required:标签颜色为必填项，且必须是有效的颜色值(如 #E91E63)",
 		},
 		"icon": []string{
-			"max:标签图标长度不能超过 10 个字符",
+			"max:标签图标长度不能超过 20 个字符",
 		},
 		"type": []string{
 			"required:标签类型为必填项",
@@ -53,7 +53,7 @@ func TagUpdateRequestCheck(data interface{}) map[string][]string {
 		"tag_id": []string{"required", "numeric_between:1,"},
 		"name":   []string{"min_cn:1", "max_cn:6"},
 		"color":  []string{"required"},
-		"icon":   []string{"max:10"},
+		"icon":   []string{"max:20"},
 		"type":   []string{"in:expense,income"},
 	}
 
@@ -70,7 +70,7 @@ func TagUpdateRequestCheck(data interface{}) map[string][]string {
 			"required:标签颜色为必填项，且必须是有效的颜色值(如 #E91E63)",
 		},
 		"icon": []string{
-			"max:标签图标长度不能超过 10 个字符",
+			"max:标签图标长度不能超过 20 个字符",
 		},
 		"type": []string{
 			"in:标签类型仅支持 expense 或 income",
