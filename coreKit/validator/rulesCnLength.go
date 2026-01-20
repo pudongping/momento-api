@@ -29,9 +29,9 @@ func init() {
 		valLength := utf8.RuneCountInString(relVal)
 		if valLength < l {
 			if message != "" {
-				return errors.WithStack(errors.New(message))
+				return errors.New(message)
 			}
-			return errors.WithStack(errors.Errorf("%s 字段，长度需大于或等于 %d 个字符", field, l))
+			return errors.Errorf("%s 字段，长度需大于或等于 %d 个字符", field, l)
 		}
 
 		return nil
@@ -53,9 +53,9 @@ func init() {
 		valLength := utf8.RuneCountInString(relVal)
 		if valLength > l {
 			if message != "" {
-				return errors.WithStack(errors.New(message))
+				return errors.New(message)
 			}
-			return errors.WithStack(errors.Errorf("%s 字段，长度不能超过 %d 个字符", field, l))
+			return errors.Errorf("%s 字段，长度不能超过 %d 个字符", field, l)
 		}
 
 		return nil
