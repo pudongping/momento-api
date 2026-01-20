@@ -152,7 +152,7 @@ func TransactionUpdateRequestCheck(data interface{}) map[string][]string {
 	rules := govalidator.MapData{
 		"transaction_id": []string{"required", "numeric_between:1,"},
 		"type":           []string{"in:expense,income"},
-		"amount":         []string{"float", "min:0.01"},
+		"amount":         []string{"float", "number_min:0.01"},
 		"tag_id":         []string{"numeric_between:1,"},
 		"remark":         []string{"max_cn:200"},
 		"created_at":     []string{"numeric"},
@@ -168,7 +168,7 @@ func TransactionUpdateRequestCheck(data interface{}) map[string][]string {
 		},
 		"amount": []string{
 			"float:金额必须为数字",
-			"min:金额必须大于 0",
+			"number_min:金额必须大于等于 0.01",
 		},
 		"tag_id": []string{
 			"numeric_between:标签ID必须为数字并且大于等于 1",

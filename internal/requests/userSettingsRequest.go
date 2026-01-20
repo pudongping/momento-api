@@ -8,7 +8,7 @@ import (
 func UpdateUserSettingsRequestCheck(data interface{}) map[string][]string {
 	rules := govalidator.MapData{
 		"background_url": []string{"url"},
-		"budget":         []string{"numeric", "min:0", "max:1000000"},
+		"budget":         []string{"numeric", "number_min:0", "number_max:1000000"},
 	}
 
 	messages := govalidator.MapData{
@@ -17,8 +17,8 @@ func UpdateUserSettingsRequestCheck(data interface{}) map[string][]string {
 		},
 		"budget": []string{
 			"numeric:预算必须为数字",
-			"min:预算最小为0",
-			"max:预算最大为1000000",
+			"number_min:预算最小为0",
+			"number_max:预算最大为1000000",
 		},
 	}
 
