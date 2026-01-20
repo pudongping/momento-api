@@ -284,14 +284,14 @@ type TransactionItem struct {
 }
 
 type TransactionListReq struct {
-	BookId            int64  `form:"book_id" valid:"book_id"`                         // 账本 ID
-	Type              string `form:"type,optional" valid:"type"`                      // 交易类型: expense (支出), income (收入)
-	TagId             int64  `form:"tag_id,optional"`                                 // 标签 ID
-	StartDate         int64  `form:"start_date,optional"`                             // 开始时间戳 (秒)
-	EndDate           int64  `form:"end_date,optional"`                               // 结束时间戳 (秒)
-	Page              int64  `form:"page,optional"`                                   // 页码，默认 1
-	PerPage           int64  `form:"per_page,optional"`                               // 每页数量，默认 20
-	LastTransactionId int64  `form:"last_transaction_id" valid:"last_transaction_id"` // 上一页最后一条记录 ID (用于游标分页优化，必填，最小为0)
+	BookId            int64  `form:"book_id" valid:"book_id"`                                  // 账本 ID
+	Type              string `form:"type,optional" valid:"type"`                               // 交易类型: expense (支出), income (收入)
+	TagId             int64  `form:"tag_id,optional"`                                          // 标签 ID
+	StartDate         int64  `form:"start_date,optional"`                                      // 开始时间戳 (秒)
+	EndDate           int64  `form:"end_date,optional"`                                        // 结束时间戳 (秒)
+	Page              int64  `form:"page,optional"`                                            // 页码，默认 1
+	PerPage           int64  `form:"per_page,optional"`                                        // 每页数量，默认 20
+	LastTransactionId int64  `form:"last_transaction_id,optional" valid:"last_transaction_id"` // 上一页最后一条记录 ID (用于游标分页优化，必填，最小为0)
 }
 
 type TransactionListResp struct {

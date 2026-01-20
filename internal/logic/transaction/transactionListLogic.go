@@ -57,7 +57,9 @@ func (l *TransactionListLogic) TransactionList(req *types.TransactionListReq) (r
 
 	// 3. 构建列表查询并应用游标分页
 	builder := l.svcCtx.TransactionsModel.SelectBuilder().Where(whereBuilder)
-	builder = l.applyCursorPagination(builder, req.LastTransactionId)
+	if req.LastTransactionId > 0 {
+		builder = l.applyCursorPagination(builder, req.LastTransactionId)
+	}
 
 	// 4. 设置排序和分页限制
 	// 默认只按 transaction_id 倒序排列
