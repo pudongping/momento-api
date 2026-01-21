@@ -152,18 +152,18 @@ func (j *RecurringJob) calculateNextExecutionTime(recurring *model.RecurringTran
 	lastTime := time.Unix(lastExecutionTimestamp, 0)
 
 	switch recurring.RecurringType {
-	case "daily":
+	case model.RecurringTransactionTypeDaily:
 		return lastTime.AddDate(0, 0, 1).Unix()
-	case "weekly":
+	case model.RecurringTransactionTypeWeekly:
 		return lastTime.AddDate(0, 0, 7).Unix()
-	case "monthly":
+	case model.RecurringTransactionTypeMonthly:
 		// 保持日期的月份增加
 		// 注意：AddDate(0, 1, 0) 会自动处理溢出，比如 1.31 + 1月 -> 3.03 (平年)
 		// 我们通常希望是 2.28
 		return addMonths(lastTime, 1).Unix()
-	case "quarterly":
+	case model.RecurringTransactionTypeQuarterly:
 		return addMonths(lastTime, 3).Unix()
-	case "yearly":
+	case model.RecurringTransactionTypeYearly:
 		return addMonths(lastTime, 12).Unix()
 	default:
 		return lastTime.AddDate(0, 0, 1).Unix() // 默认按天
@@ -203,10 +203,10 @@ func (j *RecurringJob) findNextSchedule(afterTime time.Time, recurring *model.Re
 	}
 
 	switch recurring.RecurringType {
-	case "daily":
+	case model.RecurringTransactionTypeDaily:
 		// 就是 target (或者 target 已经是明天)
 		return target.Unix()
-	case "weekly":
+	case model.RecurringTransactionTypeWeekly:
 		// 找到下一个 Weekday
 		// recurring.RecurringWeekday: 0-6 (周日-周六)
 		// time.Weekday(): Sunday=0
@@ -218,7 +218,7 @@ func (j *RecurringJob) findNextSchedule(afterTime time.Time, recurring *model.Re
 			daysToAdd = 7
 		}
 		return target.AddDate(0, 0, daysToAdd).Unix()
-	case "monthly":
+	case model.RecurringTransactionTypeMonthly:
 		// 找到下一个 Month 的 RecurringDay
 		// recurring.RecurringDay
 		// 注意：如果当前月份的 recurringDay 已经过了，或者当前月份没有 recurringDay，则找下个月
@@ -236,7 +236,7 @@ func (j *RecurringJob) findNextSchedule(afterTime time.Time, recurring *model.Re
 		nextMonthTarget := addMonths(thisMonthTarget, 1)
 		return nextMonthTarget.Unix()
 
-	case "quarterly":
+	case model.RecurringTransactionTypeQuarterly:
 		// 类似 monthly，但是间隔3个月。
 		// 这里简化：找到下一个符合 recurringDay 的月份。
 		// 但 quarterly 通常意味着从“开始时间”起每3个月。
@@ -249,7 +249,7 @@ func (j *RecurringJob) findNextSchedule(afterTime time.Time, recurring *model.Re
 		}
 		return addMonths(thisMonthTarget, 3).Unix()
 
-	case "yearly":
+	case model.RecurringTransactionTypeYearly:
 		// 每年 recurringMonth, recurringDay
 		y, _, _ := target.Date()
 		thisYearTarget := j.getValidDate(y, time.Month(recurring.RecurringMonth), int(recurring.RecurringDay), int(recurring.RecurringHour), int(recurring.RecurringMinute), target.Location())
