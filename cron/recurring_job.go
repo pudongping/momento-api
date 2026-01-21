@@ -10,6 +10,7 @@ import (
 	"github.com/pudongping/momento-api/model"
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type RecurringJob struct {
@@ -47,9 +48,14 @@ func (j *RecurringJob) Run() {
 		return
 	}
 
-	for _, recurring := range recurringList {
+	mr.ForEach(func(source chan<- interface{}) {
+		for _, recurring := range recurringList {
+			source <- recurring
+		}
+	}, func(item interface{}) {
+		recurring := item.(*model.RecurringTransactions)
 		j.processRecurring(recurring, nowTimestamp)
-	}
+	})
 
 	logx.Info("周期性记账检查完成")
 }
