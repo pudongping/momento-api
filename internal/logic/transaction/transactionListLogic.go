@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/pkg/errors"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
 	"github.com/pudongping/momento-api/coreKit/paginator"
@@ -36,10 +37,23 @@ func (l *TransactionListLogic) TransactionList(req *types.TransactionListReq) (r
 	// 1. 构建基础查询条件
 	whereBuilder := l.buildBaseQuery(userID, req)
 
-	// 2. 计算总数
-	total, err := l.countTotal(whereBuilder)
+	// 2. 初始化查询构建器
+	// 显式指定表名以避免连接查询时的列名冲突
+	countBuilder := l.svcCtx.TransactionsModel.CountBuilder("transactions.transaction_id")
+	selectBuilder := l.svcCtx.TransactionsModel.SelectBuilder("transactions.*")
+
+	// 如果有关键词搜索，需要关联 tags 表
+	if req.Keyword != "" {
+		joinClause := "tags ON transactions.tag_id = tags.tag_id"
+		countBuilder = countBuilder.LeftJoin(joinClause)
+		selectBuilder = selectBuilder.LeftJoin(joinClause)
+	}
+
+	// 3. 计算总数
+	countBuilder = countBuilder.Where(whereBuilder)
+	total, err := l.countTotal(countBuilder)
 	if err != nil {
-		return nil, err
+		return nil, errcode.DBError.WithError(errors.Wrap(err, "计算交易流水总数失败"))
 	}
 
 	_, limit, _ := paginator.PrepareOffsetLimit(req.Page, req.PerPage)
@@ -55,34 +69,34 @@ func (l *TransactionListLogic) TransactionList(req *types.TransactionListReq) (r
 		}, nil
 	}
 
-	// 3. 构建列表查询并应用游标分页
-	builder := l.svcCtx.TransactionsModel.SelectBuilder().Where(whereBuilder)
+	// 4. 构建列表查询并应用游标分页
+	selectBuilder = selectBuilder.Where(whereBuilder)
 	if req.LastTransactionId > 0 {
-		builder = l.applyCursorPagination(builder, req.LastTransactionId)
+		selectBuilder = l.applyCursorPagination(selectBuilder, req.LastTransactionId)
 	}
 
-	// 4. 设置排序和分页限制
+	// 5. 设置排序和分页限制
 	// 默认只按 transaction_id 倒序排列
-	builder = builder.OrderBy("transaction_id DESC").Limit(uint64(limit + 1))
+	selectBuilder = selectBuilder.OrderBy("transactions.transaction_id DESC").Limit(uint64(limit + 1))
 
-	// 5. 执行查询
-	list, err := l.svcCtx.TransactionsModel.FindAll(l.ctx, builder)
+	// 6. 执行查询
+	list, err := l.svcCtx.TransactionsModel.FindAll(l.ctx, selectBuilder)
 	if err != nil {
 		l.Logger.Errorf("TransactionList FindAll error: %v", err)
 		return nil, errcode.DBError.WithError(err)
 	}
 
-	// 6. 处理分页标志
+	// 7. 处理分页标志
 	hasMore := false
 	if len(list) > int(limit) {
 		hasMore = true
 		list = list[:limit]
 	}
 
-	// 7. 获取标签信息
+	// 8. 获取标签信息
 	tagMap := l.getTagsMap(list)
 
-	// 8. 组装响应数据
+	// 9. 组装响应数据
 	respList := l.assembleTransactionItems(list, tagMap)
 
 	return &types.TransactionListResp{
@@ -97,29 +111,38 @@ func (l *TransactionListLogic) TransactionList(req *types.TransactionListReq) (r
 // buildBaseQuery 构建通用的过滤条件
 func (l *TransactionListLogic) buildBaseQuery(userID uint64, req *types.TransactionListReq) squirrel.Sqlizer {
 	conditions := squirrel.And{
-		squirrel.Eq{"user_id": userID},
-		squirrel.Eq{"book_id": req.BookId},
+		squirrel.Eq{"transactions.user_id": userID},
+		squirrel.Eq{"transactions.book_id": req.BookId},
 	}
 
 	if req.Type != "" {
-		conditions = append(conditions, squirrel.Eq{"type": req.Type})
+		conditions = append(conditions, squirrel.Eq{"transactions.type": req.Type})
 	}
-	if req.TagId > 0 {
-		conditions = append(conditions, squirrel.Eq{"tag_id": req.TagId})
+	if req.MinAmount > 0 {
+		conditions = append(conditions, squirrel.GtOrEq{"transactions.amount": req.MinAmount})
+	}
+	if req.MaxAmount > 0 {
+		conditions = append(conditions, squirrel.LtOrEq{"transactions.amount": req.MaxAmount})
 	}
 	if req.StartDate > 0 {
-		conditions = append(conditions, squirrel.GtOrEq{"transaction_time": req.StartDate})
+		conditions = append(conditions, squirrel.GtOrEq{"transactions.transaction_time": req.StartDate})
 	}
 	if req.EndDate > 0 {
-		conditions = append(conditions, squirrel.LtOrEq{"transaction_time": req.EndDate})
+		conditions = append(conditions, squirrel.LtOrEq{"transactions.transaction_time": req.EndDate})
+	}
+	if req.Keyword != "" {
+		keyword := "%" + req.Keyword + "%"
+		conditions = append(conditions, squirrel.Or{
+			squirrel.Like{"transactions.remark": keyword},
+			squirrel.Like{"tags.name": keyword},
+		})
 	}
 
 	return conditions
 }
 
 // countTotal 计算总数
-func (l *TransactionListLogic) countTotal(where squirrel.Sqlizer) (int64, error) {
-	countBuilder := l.svcCtx.TransactionsModel.CountBuilder().Where(where)
+func (l *TransactionListLogic) countTotal(countBuilder squirrel.SelectBuilder) (int64, error) {
 	total, err := l.svcCtx.TransactionsModel.FindCount(l.ctx, countBuilder)
 	if err != nil {
 		l.Logger.Errorf("TransactionList FindCount error: %v", err)
@@ -132,7 +155,7 @@ func (l *TransactionListLogic) countTotal(where squirrel.Sqlizer) (int64, error)
 func (l *TransactionListLogic) applyCursorPagination(builder squirrel.SelectBuilder, lastID int64) squirrel.SelectBuilder {
 	// 如果 lastID > 0，说明需要加载更早的数据（transaction_id 更小）
 	if lastID > 0 {
-		return builder.Where(squirrel.Lt{"transaction_id": lastID})
+		return builder.Where(squirrel.Lt{"transactions.transaction_id": lastID})
 	}
 	// 如果 lastID == 0，说明是第一页，不需要额外条件
 	return builder

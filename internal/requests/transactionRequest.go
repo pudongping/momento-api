@@ -8,8 +8,10 @@ import (
 func TransactionListRequestCheck(data interface{}) map[string][]string {
 	rules := govalidator.MapData{
 		"book_id":             []string{"required", "numeric_between:1,"},
+		"keyword":             []string{"max_cn:50"},
 		"type":                []string{"in:expense,income"},
-		"tag_id":              []string{"numeric_between:1,"},
+		"min_amount":          []string{"number_min:0"},
+		"max_amount":          []string{"number_max:1000000"},
 		"start_date":          []string{"numeric"},
 		"end_date":            []string{"numeric"},
 		"page":                []string{"numeric_between:1,"},
@@ -25,8 +27,11 @@ func TransactionListRequestCheck(data interface{}) map[string][]string {
 		"type": []string{
 			"in:交易类型仅支持 expense 或 income",
 		},
-		"tag_id": []string{
-			"numeric_between:标签ID必须为数字并且大于等于 1",
+		"min_amount": []string{
+			"number_min:最小金额必须大于等于 0",
+		},
+		"max_amount": []string{
+			"number_max:最大金额必须小于等于 1000000",
 		},
 		"start_date": []string{
 			"numeric:开始时间必须为时间戳格式",
