@@ -15,10 +15,10 @@ func Start(svcCtx *svc.ServiceContext) {
 	recurringJob := NewRecurringJob(svcCtx)
 	_, err := c.AddJob("0 * * * * *", recurringJob)
 	if err != nil {
-		logx.Errorf("Failed to add recurring job: %v", err)
+		logx.Errorf("添加周期性任务失败: %v", err)
 		return
 	}
 
 	c.Start()
-	logx.Info("Cron scheduler started")
+	logx.Info("定时任务调度器已启动")
 }
