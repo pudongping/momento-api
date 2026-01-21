@@ -73,6 +73,7 @@ type (
 		RecurringDay       uint64  `db:"recurring_day"`        // 日期（1-31）
 		IsRecurringEnabled int64   `db:"is_recurring_enabled"` // 是否启用 1-是 2-否
 		LastExecutedAt     uint64  `db:"last_executed_at"`     // 最后执行时间（秒级时间戳）
+		NextExecutionTime  uint64  `db:"next_execution_time"`  // 下一次执行时间（秒级时间戳）
 		CreatedAt          uint64  `db:"created_at"`           // 创建时间（秒级时间戳）
 		UpdatedAt          uint64  `db:"updated_at"`           // 更新时间（秒级时间戳）
 	}
@@ -106,8 +107,8 @@ func (m *defaultRecurringTransactionsModel) FindOne(ctx context.Context, recurri
 }
 
 func (m *defaultRecurringTransactionsModel) Insert(ctx context.Context, data *RecurringTransactions) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, recurringTransactionsRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.BookId, data.UserId, data.Name, data.Type, data.Amount, data.TagId, data.Remark, data.RecurringType, data.RecurringHour, data.RecurringMinute, data.RecurringWeekday, data.RecurringMonth, data.RecurringDay, data.IsRecurringEnabled, data.LastExecutedAt, data.CreatedAt, data.UpdatedAt)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, recurringTransactionsRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.BookId, data.UserId, data.Name, data.Type, data.Amount, data.TagId, data.Remark, data.RecurringType, data.RecurringHour, data.RecurringMinute, data.RecurringWeekday, data.RecurringMonth, data.RecurringDay, data.IsRecurringEnabled, data.LastExecutedAt, data.NextExecutionTime, data.CreatedAt, data.UpdatedAt)
 	return ret, err
 }
 
@@ -307,7 +308,7 @@ func (m *defaultRecurringTransactionsModel) FindListByPage(ctx context.Context, 
 
 func (m *defaultRecurringTransactionsModel) Update(ctx context.Context, data *RecurringTransactions) error {
 	query := fmt.Sprintf("update %s set %s where `recurring_id` = ?", m.table, recurringTransactionsRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.BookId, data.UserId, data.Name, data.Type, data.Amount, data.TagId, data.Remark, data.RecurringType, data.RecurringHour, data.RecurringMinute, data.RecurringWeekday, data.RecurringMonth, data.RecurringDay, data.IsRecurringEnabled, data.LastExecutedAt, data.CreatedAt, data.UpdatedAt, data.RecurringId)
+	_, err := m.conn.ExecCtx(ctx, query, data.BookId, data.UserId, data.Name, data.Type, data.Amount, data.TagId, data.Remark, data.RecurringType, data.RecurringHour, data.RecurringMinute, data.RecurringWeekday, data.RecurringMonth, data.RecurringDay, data.IsRecurringEnabled, data.LastExecutedAt, data.NextExecutionTime, data.CreatedAt, data.UpdatedAt, data.RecurringId)
 	return err
 }
 

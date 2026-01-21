@@ -12,6 +12,7 @@ import (
 	"github.com/pudongping/momento-api/coreKit/errcode"
 	"github.com/pudongping/momento-api/coreKit/httpRest"
 	"github.com/pudongping/momento-api/coreKit/responses"
+	"github.com/pudongping/momento-api/cron"
 	"github.com/pudongping/momento-api/internal/config"
 	"github.com/pudongping/momento-api/internal/handler"
 	"github.com/pudongping/momento-api/internal/svc"
@@ -52,6 +53,9 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+
+	// 启动定时任务
+	cron.Start(ctx)
 
 	// 自定义错误
 	httpx.SetErrorHandlerCtx(func(ctx context.Context, err error) (int, interface{}) {
