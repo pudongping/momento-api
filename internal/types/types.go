@@ -177,15 +177,27 @@ type RecurringDeleteResp struct {
 
 type RecurringItem struct {
 	RecurringId        string  `json:"recurring_id"`
+	BookId             int64   `json:"book_id"`
+	UserId             string  `json:"user_id"`
 	Name               string  `json:"name"`
 	Type               string  `json:"type"`
 	Amount             float64 `json:"amount"`
+	TagId              int64   `json:"tag_id"`
+	TagName            string  `json:"tag_name"`
+	TagColor           string  `json:"tag_color"`
+	TagIcon            string  `json:"tag_icon"`
+	Remark             string  `json:"remark"`
 	RecurringType      string  `json:"recurring_type"`
-	RecurringDay       int64   `json:"recurring_day"`
 	RecurringHour      int64   `json:"recurring_hour"`
 	RecurringMinute    int64   `json:"recurring_minute"`
+	RecurringWeekday   int64   `json:"recurring_weekday"`
+	RecurringMonth     int64   `json:"recurring_month"`
+	RecurringDay       int64   `json:"recurring_day"`
 	IsRecurringEnabled int64   `json:"is_recurring_enabled"` // 1-启用 2-禁用
-	NextExecutionTime  int64   `json:"next_execution_time"`  // (可选) 计算出的下一次执行时间
+	LastExecutedAt     int64   `json:"last_executed_at"`
+	CreatedAt          int64   `json:"created_at"`
+	UpdatedAt          int64   `json:"updated_at"`
+	NextExecutionTime  int64   `json:"next_execution_time"` // (可选) 计算出的下一次执行时间
 }
 
 type RecurringListReq struct {

@@ -202,6 +202,7 @@ CREATE TABLE `recurring_transactions`
     `recurring_day`        TINYINT(2) UNSIGNED NOT NULL DEFAULT 0 COMMENT '日期（1-31）',
     `is_recurring_enabled` TINYINT(1) NOT NULL DEFAULT 2 COMMENT '是否启用 1-是 2-否',
     `last_executed_at`     INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '最后执行时间（秒级时间戳）',
+    `next_execution_time`  INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '下一次执行时间（秒级时间戳）',
     `created_at`           INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间（秒级时间戳）',
     `updated_at`           INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间（秒级时间戳）',
     PRIMARY KEY (`recurring_id`),
