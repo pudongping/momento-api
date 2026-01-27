@@ -344,8 +344,8 @@ type TransactionUpdateResp struct {
 }
 
 type UpdateUserSettingsReq struct {
-	BackgroundUrl string  `json:"background_url,optional" valid:"background_url"`
-	Budget        float64 `json:"budget,optional" valid:"budget"`
+	BackgroundUrl *string  `json:"background_url,optional" valid:"background_url"`
+	Budget        *float64 `json:"budget,optional" valid:"budget"`
 }
 
 type UploadFileReq struct {

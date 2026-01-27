@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"github.com/pudongping/momento-api/coreKit/ctxData"
 	"github.com/pudongping/momento-api/coreKit/errcode"
@@ -52,11 +53,11 @@ func (l *UpdateUserSettingsLogic) UpdateUserSettings(req *types.UpdateUserSettin
 			UpdatedAt: now,
 		}
 
-		if req.BackgroundUrl != "" {
-			userSettings.BackgroundUrl = req.BackgroundUrl
+		if req.BackgroundUrl != nil {
+			userSettings.BackgroundUrl = *req.BackgroundUrl
 		}
-		if req.Budget > 0 {
-			userSettings.Budget = req.Budget
+		if req.Budget != nil {
+			userSettings.Budget = *req.Budget
 		}
 
 		_, err = l.svcCtx.UserSettingModel.Insert(l.ctx, userSettings)
@@ -65,21 +66,21 @@ func (l *UpdateUserSettingsLogic) UpdateUserSettings(req *types.UpdateUserSettin
 		}
 	} else {
 		// 存在则更新
-		updateNeeded := false
-		if req.BackgroundUrl != "" && req.BackgroundUrl != userSettings.BackgroundUrl {
-			userSettings.BackgroundUrl = req.BackgroundUrl
-			updateNeeded = true
+		updateData := make(map[string]interface{})
+
+		if req.BackgroundUrl != nil && *req.BackgroundUrl != userSettings.BackgroundUrl {
+			updateData["background_url"] = *req.BackgroundUrl
 		}
-		if req.Budget > 0 && req.Budget != userSettings.Budget {
-			userSettings.Budget = req.Budget
-			updateNeeded = true
+		if req.Budget != nil && *req.Budget != userSettings.Budget {
+			updateData["budget"] = *req.Budget
 		}
 
-		if updateNeeded {
-			userSettings.UpdatedAt = now
-			err = l.svcCtx.UserSettingModel.Update(l.ctx, userSettings)
+		if len(updateData) > 0 {
+			updateData["updated_at"] = now
+			where := squirrel.Eq{"user_setting_id": userSettings.UserSettingId}
+			_, err = l.svcCtx.UserSettingModel.UpdateFilter(l.ctx, nil, updateData, where)
 			if err != nil {
-				return errcode.DBError.WithError(errors.Wrapf(err, "UpdateUserSettings Update")).Msgr("更新用户设置失败")
+				return errcode.DBError.WithError(errors.Wrapf(err, "UpdateUserSettings UpdateFilter")).Msgr("更新用户设置失败")
 			}
 		}
 	}
