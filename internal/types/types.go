@@ -376,6 +376,10 @@ type UserInfoResp struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+type UserLogoutReq struct {
+	Type string `json:"type,optional"` // delete-注销账号
+}
+
 type UserSettingsResp struct {
 	UserSettingID int64   `json:"user_setting_id"`
 	UserId        string  `json:"user_id"`

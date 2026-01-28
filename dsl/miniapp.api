@@ -50,7 +50,7 @@ service momentoapi {
 service momentoapi {
 	@doc "用户退出登录"
 	@handler userLogout
-	post /user/logout
+	post /user/logout (UserLogoutReq)
 
 	@doc "获取用户信息"
 	@handler userInfo

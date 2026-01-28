@@ -1,3 +1,6 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.9.2
+
 package user
 
 import (
@@ -8,11 +11,19 @@ import (
 
 	"github.com/pudongping/momento-api/internal/logic/user"
 	"github.com/pudongping/momento-api/internal/svc"
+	"github.com/pudongping/momento-api/internal/types"
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 // 用户退出登录
 func UserLogoutHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.UserLogoutReq
+		if err := httpx.Parse(r, &req); err != nil {
+			responses.ToParamValidateResponse(r, w, err)
+			return
+		}
+
 		// 获取 token
 		token, err := request.BearerExtractor{}.ExtractToken(r)
 		if err != nil {
@@ -21,7 +32,7 @@ func UserLogoutHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := user.NewUserLogoutLogic(r.Context(), svcCtx)
-		err = l.UserLogout(token)
+		err = l.UserLogout(&req, token)
 		responses.ToResponse(r, w, nil, err)
 	}
 }

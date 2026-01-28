@@ -1,4 +1,10 @@
 type (
+    UserLogoutReq {
+        Type string `json:"type,optional"` // delete-注销账号
+    }
+)
+
+type (
     // 获取用户信息
     UserInfoResp {
         UserId string `json:"user_id"`
