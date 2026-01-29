@@ -125,6 +125,7 @@ CREATE TABLE `account_book_invitations`
     `updated_at`    INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间（秒级时间戳）',
     PRIMARY KEY (`invitation_id`),
     KEY             `idx_book_id` (`book_id`),
+    KEY             `idx_inviter_uid` (`inviter_uid`),
     KEY             `idx_target_uid` (`target_uid`),
     KEY             `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='账本邀请表';
@@ -228,8 +229,7 @@ CREATE TABLE `festivals`
     `updated_at`    INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间（秒级时间戳）',
     PRIMARY KEY (`festival_id`),
     KEY             `idx_uid` (`user_id`),
-    KEY             `idx_festival_date` (`festival_date`),
-    KEY             `idx_is_show_home` (`is_show_home`)
+    KEY             `idx_festival_date` (`festival_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='节日表';
 
 -- =============================================

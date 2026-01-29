@@ -19,7 +19,7 @@
     ```json
     {
       "code": 200,          // 状态码，200 表示成功
-      "message": "success", // 提示信息
+      "msg": "success", // 提示信息
       "data": { ... }       // 业务数据
     }
     ```
