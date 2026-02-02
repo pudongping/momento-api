@@ -34,8 +34,12 @@ func NewTransactionListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *T
 func (l *TransactionListLogic) TransactionList(req *types.TransactionListReq) (resp *types.TransactionListResp, err error) {
 	userID := cast.ToUint64(ctxData.GetUIDFromCtx(l.ctx))
 
+	if err = l.checkBookMember(req.BookId, userID); err != nil {
+		return nil, err
+	}
+
 	// 1. 构建基础查询条件
-	whereBuilder := l.buildBaseQuery(userID, req)
+	whereBuilder := l.buildBaseQuery(req)
 
 	// 2. 初始化查询构建器
 	// 显式指定表名以避免连接查询时的列名冲突
@@ -109,9 +113,8 @@ func (l *TransactionListLogic) TransactionList(req *types.TransactionListReq) (r
 }
 
 // buildBaseQuery 构建通用的过滤条件
-func (l *TransactionListLogic) buildBaseQuery(userID uint64, req *types.TransactionListReq) squirrel.Sqlizer {
+func (l *TransactionListLogic) buildBaseQuery(req *types.TransactionListReq) squirrel.Sqlizer {
 	conditions := squirrel.And{
-		squirrel.Eq{"transactions.user_id": userID},
 		squirrel.Eq{"transactions.book_id": req.BookId},
 	}
 
@@ -227,4 +230,22 @@ func (l *TransactionListLogic) assembleTransactionItems(list []*model.Transactio
 	}
 
 	return respList
+}
+
+// checkBookMember 检查用户是否为账本成员且状态正常
+func (l *TransactionListLogic) checkBookMember(bookID int64, userID uint64) error {
+	member, err := l.svcCtx.AccountBookMembersModel.FindOneByBookIdUserId(l.ctx, uint64(bookID), userID)
+	if err != nil {
+		if err == model.ErrNotFound {
+			return errcode.Fail.Msgr("您不是该账本的成员，无法查看账单")
+		}
+		return errcode.DBError.WithError(errors.Wrap(err, "查询账本成员失败"))
+	}
+
+	// 检查成员状态是否为已加入
+	if member.Status != model.AccountBookMemberStatusJoined {
+		return errcode.Fail.Msgr("您尚未加入该账本，无法查看账单")
+	}
+
+	return nil
 }
