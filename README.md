@@ -8,6 +8,11 @@
 
 **Momento API** 是微信小程序“时光账记”的后端服务，基于 [go-zero](https://github.com/zeromicro/go-zero) 微服务框架构建。这是一款专注于个人财务管理与生活记录的应用，旨在帮助用户通过简洁的方式记录收支、管理周期性账单以及关注重要节日。
 
+## 源码
+
+- 前端小程序端源码：[Momento MiniApp](https://github.com/pudongping/momento-miniapp) 或者 [Momento MiniApp (Gitee)](https://gitee.com/pudongping/momento-miniapp)
+- 后端 API 接口源码：[Momento API](https://github.com/pudongping/momento-api) 或者 [Momento API (Gitee)](https://gitee.com/pudongping/momento-api)
+
 ## 快速体验
 
 可以直接使用微信扫描下方小程序二维码进行体验：
