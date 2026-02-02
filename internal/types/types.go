@@ -282,8 +282,8 @@ type TransactionItem struct {
 	TransactionId   string  `json:"transaction_id"`
 	BookId          int64   `json:"book_id"`
 	UserId          string  `json:"user_id"`
-	Nickname        string  `json:"nickname"`
-	Avatar          string  `json:"avatar"`
+	UserNickname    string  `json:"user_nickname"`
+	UserAvatar      string  `json:"user_avatar"`
 	Type            string  `json:"type"`
 	Amount          float64 `json:"amount"`
 	TagId           int64   `json:"tag_id"`

@@ -265,8 +265,8 @@ func (l *TransactionListLogic) assembleTransactionItems(list []*model.Transactio
 
 		// 填充用户信息
 		if user, ok := userMap[item.UserId]; ok {
-			tItem.Nickname = user.Nickname
-			tItem.Avatar = user.Avatar
+			tItem.UserNickname = user.Nickname
+			tItem.UserAvatar = user.Avatar
 		}
 
 		respList = append(respList, tItem)
