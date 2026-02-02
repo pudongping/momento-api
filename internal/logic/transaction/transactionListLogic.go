@@ -100,8 +100,11 @@ func (l *TransactionListLogic) TransactionList(req *types.TransactionListReq) (r
 	// 8. 获取标签信息
 	tagMap := l.getTagsMap(list)
 
-	// 9. 组装响应数据
-	respList := l.assembleTransactionItems(list, tagMap)
+	// 9. 获取用户信息
+	userMap := l.getUserMap(list)
+
+	// 10. 组装响应数据
+	respList := l.assembleTransactionItems(list, tagMap, userMap)
 
 	return &types.TransactionListResp{
 		List:    respList,
@@ -199,8 +202,42 @@ func (l *TransactionListLogic) getTagsMap(list []*model.Transactions) map[uint64
 	return tagMap
 }
 
+// getUserMap 获取用户 Map
+func (l *TransactionListLogic) getUserMap(list []*model.Transactions) map[uint64]*model.Users {
+	userMap := make(map[uint64]*model.Users)
+	userIDSet := make(map[uint64]struct{})
+
+	for _, item := range list {
+		if item.UserId > 0 {
+			userIDSet[item.UserId] = struct{}{}
+		}
+	}
+
+	if len(userIDSet) == 0 {
+		return userMap
+	}
+
+	userIDs := make([]uint64, 0, len(userIDSet))
+	for id := range userIDSet {
+		userIDs = append(userIDs, id)
+	}
+
+	userBuilder := l.svcCtx.UserModel.SelectBuilder().Where(squirrel.Eq{"user_id": userIDs})
+	users, err := l.svcCtx.UserModel.FindAll(l.ctx, userBuilder)
+	if err != nil {
+		l.Logger.Errorf("TransactionList FindAll Users error: %v", err)
+		return userMap
+	}
+
+	for _, u := range users {
+		userMap[u.UserId] = u
+	}
+
+	return userMap
+}
+
 // assembleTransactionItems 组装交易记录数据
-func (l *TransactionListLogic) assembleTransactionItems(list []*model.Transactions, tagMap map[uint64]*model.Tags) []types.TransactionItem {
+func (l *TransactionListLogic) assembleTransactionItems(list []*model.Transactions, tagMap map[uint64]*model.Tags, userMap map[uint64]*model.Users) []types.TransactionItem {
 	respList := make([]types.TransactionItem, 0, len(list))
 
 	for _, item := range list {
@@ -224,6 +261,12 @@ func (l *TransactionListLogic) assembleTransactionItems(list []*model.Transactio
 			tItem.TagName = tag.Name
 			tItem.TagColor = tag.Color
 			tItem.TagIcon = tag.Icon
+		}
+
+		// 填充用户信息
+		if user, ok := userMap[item.UserId]; ok {
+			tItem.Nickname = user.Nickname
+			tItem.Avatar = user.Avatar
 		}
 
 		respList = append(respList, tItem)
